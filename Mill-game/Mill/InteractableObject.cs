@@ -9,13 +9,13 @@ namespace Mill.Engine {
     public class InteractableObject {
 
         public Vector3 location { get; set; }
+        public float detectionRadius { get; set; }
 
         public float? IntersectsRay(Vector3 rayDirection, Vector3 rayOrigin) {
 
-            var radius = 1f; // probaj sa 0.5f
             var difference = location - (rayOrigin + rayDirection);
             var differenceLengthSquared = difference.LengthSquared;
-            var sphereRadiusSquared = radius * radius;
+            var sphereRadiusSquared = detectionRadius * detectionRadius;
 
             if (differenceLengthSquared < sphereRadiusSquared) {
                 return 0f;

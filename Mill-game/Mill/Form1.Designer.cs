@@ -36,7 +36,7 @@ namespace Mill.Engine {
             this.mainPanel.BackColor = System.Drawing.Color.Black;
             this.mainPanel.Location = new System.Drawing.Point(12, 12);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(500, 500);
+            this.mainPanel.Size = new System.Drawing.Size(800, 600);
             this.mainPanel.TabIndex = 0;
             this.mainPanel.VSync = true;
             this.mainPanel.Load += new System.EventHandler(this.mainPanel_Load);
@@ -45,7 +45,7 @@ namespace Mill.Engine {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(884, 561);
+            this.ClientSize = new System.Drawing.Size(826, 620);
             this.Controls.Add(this.mainPanel);
             this.Name = "Form1";
             this.Text = "Mill";

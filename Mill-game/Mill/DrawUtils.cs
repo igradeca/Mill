@@ -12,7 +12,7 @@ namespace Mill.Engine {
 
         public static DrawUtils instance;
 
-        public Camera MainCamera;
+        //public Camera MainCamera;
 
         private Size _panelSize;
         private Matrix4 _projectionMatrix;
@@ -28,7 +28,6 @@ namespace Mill.Engine {
 
             _panelSize = rect;
             SetProjectionMatrix();
-            MainCamera = new Camera();
         }
 
         private void SetProjectionMatrix() {
@@ -43,10 +42,10 @@ namespace Mill.Engine {
             var aspectRatio = (float)_panelSize.Width / _panelSize.Height;
             
             _projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
-                _fov * ((float)Math.PI / 180f),         // Field of view angle, in radians
+                _fov * ((float)Math.PI / 180f),         // Field of view angle, in radians  // (float)Math.PI / 4    _fov * ((float)Math.PI / 180f)
                 aspectRatio,                            // Current window aspect ratio
-                0.001f,                                 // Near plane
-                100f);                                  // Far plane
+                0.1f,                                 // Near plane
+                1000f);                                  // Far plane
         }
 
         public void InitGL() {
@@ -63,7 +62,7 @@ namespace Mill.Engine {
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
-            Matrix4 lookAt = MainCamera.LookAtMatrix;
+            Matrix4 lookAt = Utils.MainCamera.LookAtMatrix;
             GL.LoadMatrix(ref lookAt);
         }
 
@@ -83,47 +82,70 @@ namespace Mill.Engine {
             rayEye = new Vector4(rayEye.X, rayEye.Y, -1f, 0f);
 
             // 4D world coordinates
-            var rayWorldCoordinates = (MainCamera.LookAtMatrix.Inverted() * rayEye).Xyz;
+            var rayWorldCoordinates = (Utils.MainCamera.LookAtMatrix.Inverted() * rayEye).Xyz;
             rayWorldCoordinates.Normalize();
 
             return rayWorldCoordinates;
         }
 
-        public void FindClosestIntersectionHitByRay(Vector3 rayCoordinates, List<Intersection> circles) {
+        public void RenderTestCircles(List<Intersection> testList) {
 
-            int? bestCandidateIndex = null;
-            float? bestDistance = null;
+            float DEG2RAD = 3.14159f / 180f;
 
-            for (int i = 0; i < circles.Count; i++) {
-
-                circles[i].occupied = false;
-                var candidateDistance = circles[i].IntersectsRay(rayCoordinates, MainCamera.Position);
-
-                Console.WriteLine("circle " + i.ToString() + " : " + candidateDistance.ToString());
-
-                if (candidateDistance == null) {
-                    continue;
+            for (int i = 0; i < testList.Count; i++) {
+                if (testList[i].occupied) {
+                    GL.Color3(Color.Black);
+                } else {
+                    GL.Color3(Color.Red);
                 }
 
-                if (bestDistance == null) {
-                    bestDistance = candidateDistance;
-                    bestCandidateIndex = i;
-                    continue;
+                GL.Begin(PrimitiveType.LineLoop);
+                for (int j = 0; j < 360; j++) {
+                    float degInRad = j * DEG2RAD;
+                    GL.Vertex3(Math.Cos(degInRad) * 1f + testList[i].location.X, Math.Sin(degInRad) * 1f + testList[i].location.Y, testList[i].location.Z);
                 }
-                if (candidateDistance < bestDistance) {
-                    bestDistance = candidateDistance;
-                    bestCandidateIndex = i;
-                }
-
-
-            }
-
-            if (bestCandidateIndex != null) {
-                circles[(int)bestCandidateIndex].occupied = true;
+                GL.End();
             }
         }
 
+        public void RenderGrid(Point[] boardBackground, List<Intersection> boardPoints) {
+            
+            // Board
+            GL.Begin(PrimitiveType.Quads);
+            GL.Color3(Color.SandyBrown);
+            for (int i = 0; i < boardBackground.Length; i++) {
+                GL.Vertex3(
+                boardBackground[i].X,
+                boardBackground[i].Y,
+                -0.05f);
+            }
+            GL.End();
+            
+            // Intersections   
+            GL.PointSize(10);
+            for (int i = 0; i < boardPoints.Count; i++) {
+                if (boardPoints[i].occupied) {
+                    GL.Color3(Color.Black);
+                } else {
+                    GL.Color3(Color.Red);
+                }
+                GL.Begin(PrimitiveType.Points);
+                GL.Vertex3(boardPoints[i].location);
+                GL.End();
+            }
 
+            // Lines
+            GL.LineWidth(2);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Color3(Color.SaddleBrown);
+            for (int i = 0; i < boardPoints.Count; i++) {
+                for (int j = 0; j < boardPoints[i].adjacentPoints.Count; j++) {
+                    GL.Vertex3(boardPoints[i].location);
+                    GL.Vertex3(boardPoints[i].adjacentPoints[j].location);
+                }
+            }
+            GL.End();
+        }
 
 
     }

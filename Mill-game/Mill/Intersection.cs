@@ -13,14 +13,15 @@ namespace Mill.Engine {
 
         public int layer { get; }        
 
-        public Intersection(int layer, Vector3 location) {
+        public Intersection(int layer, Vector3 location, float detectionRadius = 0.3f) {
 
             this.layer = layer;
             this.location = new Vector3(
                 location.X,
                 location.Y,
                 location.Z);
-            
+            this.detectionRadius = detectionRadius;
+
             occupied = false;
             adjacentPoints = new List<Intersection>();
         }

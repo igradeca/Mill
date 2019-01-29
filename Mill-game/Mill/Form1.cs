@@ -35,12 +35,15 @@ namespace Mill.Engine {
             _input.Mouse = new MouseInput(this, mainPanel);
             _input.Keyboard = new KeyboardInput(mainPanel);
 
+            Utils.MainCamera = new Camera();
+            Utils.MainCamera = new Camera(new Vector3(0f, 0f, 15f), new Vector3(0f, 0f, 0f));
+
             new DrawUtils(mainPanel.ClientRectangle.Size);
             DrawUtils.instance.InitGL();
 
             _gameMaster = new GameMaster(Utils.GameType.NineMorris);
 
-            TestPoints();
+            //TestPoints();
         }
 
         private void TestPoints() {
@@ -80,26 +83,12 @@ namespace Mill.Engine {
 
             //
             // Render code here
-            //
-            //_gameMaster.Render();
+            //            
             DrawUtils.instance.OnRender();
+            //DrawUtils.instance.RenderTestCircles(testList);
+            DrawUtils.instance.RenderGrid(_gameMaster.Board.boardBackground, _gameMaster.Board.boardPoints);
+            //_gameMaster.Render();
 
-            float DEG2RAD = 3.14159f / 180f;
-
-            for (int i = 0; i < testList.Count; i++) {
-                if (testList[i].occupied) {
-                    GL.Color3(Color.Black);
-                } else {
-                    GL.Color3(Color.Red);
-                }
-
-                GL.Begin(PrimitiveType.LineLoop);
-                for (int j = 0; j < 360; j++) {
-                    float degInRad = j * DEG2RAD;
-                    GL.Vertex3(Math.Cos(degInRad) * 1f + testList[i].location.X, Math.Sin(degInRad) * 1f + testList[i].location.Y, testList[i].location.Z);
-                }
-                GL.End();
-            }
 
             //
             // Refresh screen
@@ -116,9 +105,11 @@ namespace Mill.Engine {
         private void MouseInput() {
 
             if (_input.Mouse.LeftPressed) {
-
+                
                 Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
-                DrawUtils.instance.FindClosestIntersectionHitByRay(rayCoordinates, testList);
+                //Console.WriteLine(rayCoordinates.X + " " + rayCoordinates.Y + " " + rayCoordinates.Z);
+                Utils.FindClosestIntersectionHitByRay(rayCoordinates, _gameMaster.Board.boardPoints);
+                
             }
         }
 

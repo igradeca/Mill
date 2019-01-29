@@ -8,13 +8,34 @@ using System.Threading.Tasks;
 namespace Mill.Engine {
     public class Board {
 
+        public Point[] boardBackground;
+
         public List<Intersection> boardPoints;
         public int layersNum;
         public int boardPointsNum;
 
         public Board(Utils.GameType gameType) {
 
+            SetBoardBackground();
             SetBoard(gameType);
+        }
+
+        private void SetBoardBackground() {
+
+            boardBackground = new Point[4];
+
+            boardBackground[0] = new Point(
+                Utils.GridSize.Width / 2f, 
+                Utils.GridSize.Height / 2f);
+            boardBackground[1] = new Point(
+                -Utils.GridSize.Width / 2f,
+                Utils.GridSize.Height / 2f);
+            boardBackground[2] = new Point(
+                -Utils.GridSize.Width / 2f,
+                -Utils.GridSize.Height / 2f);
+            boardBackground[3] = new Point(
+                Utils.GridSize.Width / 2f,
+                -Utils.GridSize.Height / 2f);
         }
 
         private void SetBoard(Utils.GameType gameType) {
@@ -49,46 +70,49 @@ namespace Mill.Engine {
 
         private void SetNineMorrisPoints() {
 
-            float intersecStart = Utils.gridPadding;
-            float intersecEnd = Utils.gridSize.Width - (intersecStart);
+            float intersecStart = Utils.GridPadding;
+            float intersecEnd = Utils.GridSize.Width - (intersecStart);
+
+            float depth = 0f;
 
             boardPoints = new List<Intersection>();
 
             for (int i = 0; i < layersNum; i++) {
-                boardPoints.Add(new Intersection(i, new Vector3(
-                    intersecStart + (Utils.layerOffset * i),
-                    Utils.gridPadding + (Utils.layerOffset * i),
-                    -0.1f)));
-                boardPoints.Add(new Intersection(i, new Vector3(
-                    Utils.gridPadding + ((intersecEnd - intersecStart) / 2f),
-                    Utils.gridPadding + (Utils.layerOffset * i),
-                    -0.1f)));
-                boardPoints.Add(new Intersection(i, new Vector3(
-                    intersecEnd - (Utils.layerOffset * i),
-                    Utils.gridPadding + (Utils.layerOffset * i),
-                    -0.1f)));
 
                 boardPoints.Add(new Intersection(i, new Vector3(
-                    intersecStart + (Utils.layerOffset * i),
-                    Utils.gridPadding + ((intersecEnd - intersecStart) / 2f),
-                    -0.1f)));
+                    boardBackground[2].X + intersecStart + (Utils.LayerOffset * i),
+                    boardBackground[2].Y + Utils.GridPadding + (Utils.LayerOffset * i),
+                    depth)));
                 boardPoints.Add(new Intersection(i, new Vector3(
-                    intersecEnd - (Utils.layerOffset * i),
-                    Utils.gridPadding + ((intersecEnd - intersecStart) / 2f),
-                    -0.1f)));
+                    boardBackground[2].X + Utils.GridPadding + ((intersecEnd - intersecStart) / 2f),
+                    boardBackground[2].Y + Utils.GridPadding + (Utils.LayerOffset * i),
+                    depth)));
+                boardPoints.Add(new Intersection(i, new Vector3(
+                    boardBackground[2].X + intersecEnd - (Utils.LayerOffset * i),
+                    boardBackground[2].Y + Utils.GridPadding + (Utils.LayerOffset * i),
+                    depth)));
 
                 boardPoints.Add(new Intersection(i, new Vector3(
-                    intersecStart + (Utils.layerOffset * i),
-                    intersecEnd - (Utils.layerOffset * i),
-                    -0.1f)));
+                    boardBackground[2].X + intersecStart + (Utils.LayerOffset * i),
+                    boardBackground[2].Y + Utils.GridPadding + ((intersecEnd - intersecStart) / 2f),
+                    depth)));
                 boardPoints.Add(new Intersection(i, new Vector3(
-                    Utils.gridPadding + ((intersecEnd - intersecStart) / 2f),
-                    intersecEnd - (Utils.layerOffset * i),
-                    -0.1f)));
+                    boardBackground[2].X + intersecEnd - (Utils.LayerOffset * i),
+                    boardBackground[2].Y + Utils.GridPadding + ((intersecEnd - intersecStart) / 2f),
+                    depth)));
+
                 boardPoints.Add(new Intersection(i, new Vector3(
-                    intersecEnd - (Utils.layerOffset * i),
-                    intersecEnd - (Utils.layerOffset * i),
-                    -0.1f)));
+                    boardBackground[2].X + intersecStart + (Utils.LayerOffset * i),
+                    boardBackground[2].Y + intersecEnd - (Utils.LayerOffset * i),
+                    depth)));
+                boardPoints.Add(new Intersection(i, new Vector3(
+                    boardBackground[2].X + Utils.GridPadding + ((intersecEnd - intersecStart) / 2f),
+                    boardBackground[2].Y + intersecEnd - (Utils.LayerOffset * i),
+                    depth)));
+                boardPoints.Add(new Intersection(i, new Vector3(
+                    boardBackground[2].X + intersecEnd - (Utils.LayerOffset * i),
+                    boardBackground[2].Y + intersecEnd - (Utils.LayerOffset * i),
+                    depth)));
             }
         }
 
@@ -114,7 +138,7 @@ namespace Mill.Engine {
                         continue;
                     } else {                        
                         if (lookLeft) {
-                            if (CheckPoint(boardPoints[index].location.X + (Utils.layerOffset * i),
+                            if (CheckPoint(boardPoints[index].location.X + (Utils.LayerOffset * i),
                                 boardPoints[index].location.Y, j)) {
                                 boardPoints[index].adjacentPoints.Add(boardPoints[j]);
                                 lookLeft = false;
@@ -122,7 +146,7 @@ namespace Mill.Engine {
                         }
                         
                         if (lookRight) {
-                            if (CheckPoint(boardPoints[index].location.X - (Utils.layerOffset * i),
+                            if (CheckPoint(boardPoints[index].location.X - (Utils.LayerOffset * i),
                                 boardPoints[index].location.Y, j)) {
                                 boardPoints[index].adjacentPoints.Add(boardPoints[j]);
                                 lookRight = false;
@@ -131,7 +155,7 @@ namespace Mill.Engine {
                         
                         if (lookUp) {
                             if (CheckPoint(boardPoints[index].location.X,
-                                boardPoints[index].location.Y + (Utils.layerOffset * i), j)) {
+                                boardPoints[index].location.Y + (Utils.LayerOffset * i), j)) {
                                 boardPoints[index].adjacentPoints.Add(boardPoints[j]);
                                 lookUp = false;
                             }
@@ -139,7 +163,7 @@ namespace Mill.Engine {
                         
                         if (lookDown) {
                             if (CheckPoint(boardPoints[index].location.X,
-                                boardPoints[index].location.Y - (Utils.layerOffset * i), j)) {
+                                boardPoints[index].location.Y - (Utils.LayerOffset * i), j)) {
                                 boardPoints[index].adjacentPoints.Add(boardPoints[j]);
                                 lookDown = false;
                             }

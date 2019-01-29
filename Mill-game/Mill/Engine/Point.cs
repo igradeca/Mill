@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Mill.Engine {
-    class Point {
+    public class Point {
 
         public float X { get; set; }
         public float Y { get; set; }

@@ -20,7 +20,7 @@ namespace Mill.Engine {
                 Vector3.Zero,               // Target position in world space
                 Vector3.UnitY);             // Heads up
         }
-        /*
+        
         public Camera(Vector3 position, Vector3 target) {
 
             Position = position;
@@ -29,7 +29,7 @@ namespace Mill.Engine {
                 target, 
                 Vector3.UnitY);
         }
-        */
+        
 
     }
 }
