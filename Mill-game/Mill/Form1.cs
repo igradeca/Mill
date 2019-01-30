@@ -43,7 +43,7 @@ namespace Mill.Engine {
 
             _gameMaster = new GameMaster(Utils.GameType.NineMorris);
 
-            //TestPoints();
+            TestPoints();
         }
 
         private void TestPoints() {
@@ -108,8 +108,7 @@ namespace Mill.Engine {
                 
                 Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
                 //Console.WriteLine(rayCoordinates.X + " " + rayCoordinates.Y + " " + rayCoordinates.Z);
-                Utils.FindClosestIntersectionHitByRay(rayCoordinates, _gameMaster.Board.boardPoints);
-                
+                Utils.FindClosestIntersectionHitByRay(rayCoordinates, _gameMaster.Board.boardPoints);                
             }
         }
 

@@ -61,6 +61,7 @@
     <Compile Include="Engine\KeyboardInput.cs" />
     <Compile Include="Engine\MouseInput.cs" />
     <Compile Include="Engine\Point.cs" />
+    <Compile Include="Engine\Tween.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
