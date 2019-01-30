@@ -60,7 +60,6 @@ namespace Mill.Gameobjects {
             }
 
             if (_input.Mouse.LeftPressed) {
-
                 Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
                 //Console.WriteLine(rayCoordinates.X + " " + rayCoordinates.Y + " " + rayCoordinates.Z);
                 if (PointSelected() && Utils.HasRayHitGameObject(rayCoordinates, _board.SelectedPoint)) {
@@ -68,11 +67,9 @@ namespace Mill.Gameobjects {
                 }
 
             } else if (_input.Mouse.RightPressed) {
-
                 _playerAtTurn.ManToMove = null;
 
             } else {
-
                 Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
                 Utils.FindClosestIntersectionHitByRay(rayCoordinates, _board.BoardPoints, ref _board.SelectedPoint);
 
@@ -112,6 +109,7 @@ namespace Mill.Gameobjects {
                     MoveMan();
                     break;
                 case Utils.PlayerState.Fly:
+                    FlyMan();
                     break;
                 case Utils.PlayerState.GameOver:
                     break;
@@ -133,16 +131,33 @@ namespace Mill.Gameobjects {
 
             if (_board.SelectedPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.SelectedPoint.Location)) {
                 _playerAtTurn.ManToMove = _board.SelectedPoint;
+            } else if (_playerAtTurn.ManToMove != null && !_board.SelectedPoint.Occupied && ArePointsAdjacent(_playerAtTurn.ManToMove, _board.SelectedPoint)) {              
+                _playerAtTurn.MoveManAt(_board.SelectedPoint);                
+                EndTurn();
+            }
+        }
+
+        private bool ArePointsAdjacent(Intersection mainPoint, Intersection pointToCheck) {
+
+            if (mainPoint.AdjacentPoints.Exists(x => x.Location == pointToCheck.Location)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public void FlyMan() {
+
+            if (_board.SelectedPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.SelectedPoint.Location)) {
+                _playerAtTurn.ManToMove = _board.SelectedPoint;
             } else if (_playerAtTurn.ManToMove != null && !_board.SelectedPoint.Occupied) {
-                //_playerAtTurn.ManToMove = null;                
                 _playerAtTurn.MoveManAt(_board.SelectedPoint);
-                
                 EndTurn();
             }
         }
 
         public void EndTurn() {
-
+            _board.SelectedPoint = null;
             _nextTurnTime = 1f;
         }
 
@@ -159,7 +174,7 @@ namespace Mill.Gameobjects {
 
             _playerAtTurn = (_playerAtTurn.Name == _bluePlayer.Name) ? _redPlayer : _bluePlayer;
             _playerAtTurn.StartTurn();
-            Console.WriteLine(_playerAtTurn.Name + "'s turn! " + _playerAtTurn.state.ToString());
+            Console.WriteLine(_playerAtTurn.Name + "'s turn! " + _playerAtTurn.state.ToString() + " men: " + _playerAtTurn.MenOnBoard.Count.ToString());
 
             _board.SelectedPoint = null;
             _nextTurnTime = null;
