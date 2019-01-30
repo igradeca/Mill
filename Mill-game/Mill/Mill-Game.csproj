@@ -71,8 +71,9 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Engine\FastLoop.cs" />
-    <Compile Include="Gameobjects\GameManager.cs" />
+    <Compile Include="Gameobjects\GameData.cs" />
     <Compile Include="Engine\IGameObject.cs" />
+    <Compile Include="Gameobjects\GameManager.cs" />
     <Compile Include="Gameobjects\InteractableObject.cs" />
     <Compile Include="Gameobjects\Intersection.cs" />
     <Compile Include="Gameobjects\Player.cs" />

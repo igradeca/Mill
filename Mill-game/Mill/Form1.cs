@@ -20,7 +20,7 @@ namespace Mill {
         private FastLoop _fastLoop;
         private StateSystem _system;
         private Input _input;
-        private GameManager _gameManager;
+        private GameData _gameManager;
 
         private List<Intersection> testList;
 
@@ -34,7 +34,7 @@ namespace Mill {
             // Instantiate main game loop
             _fastLoop = new FastLoop(GameLoop);
 
-            _gameManager = new GameManager(Utils.GameType.NineMorris);
+            _gameManager = new GameData(Utils.GameType.NineMorris);
 
             InitializeInputs();
             InitializeGameStates();

@@ -13,9 +13,9 @@ namespace Mill.GameStates {
 
         private StateSystem _system;
         private Input _input;
-        private GameManager _gameManager;
+        private GameData _gameManager;
 
-        public GameOver(StateSystem system, Input input, GameManager gameManager) {
+        public GameOver(StateSystem system, Input input, GameData gameManager) {
 
             _system = system;
             _input = input;

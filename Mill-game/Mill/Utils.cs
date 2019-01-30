@@ -11,6 +11,8 @@ using Mill.Gameobjects;
 namespace Mill {
     public static class Utils {
 
+        public const float DEG2RAD = 3.14159f / 180f;
+
         public static Engine.Point GridCenter = new Engine.Point(0f, 0f);
         public static Size GridSize = new Size(10, 10);
         public static float GridPadding = 1f;
@@ -27,14 +29,22 @@ namespace Mill {
             LaskerMorris
         }
 
-        public static void FindClosestIntersectionHitByRay(Vector3 rayCoordinates, List<Intersection> points) {
+        public enum PlayerState {
+
+            PlacingMen,
+            MovingMen,
+            Fly,
+            GameOver
+        }
+
+        public static void FindClosestIntersectionHitByRay(Vector3 rayCoordinates, List<Intersection> points, ref Intersection selectedPoint) {
 
             int? bestCandidateIndex = null;
             float? bestDistance = null;
 
             for (int i = 0; i < points.Count; i++) {
 
-                points[i].Occupied = false;
+                //points[i].Occupied = false;
                 var candidateDistance = points[i].IntersectsRay(rayCoordinates, MainCamera.Position);
                 //Console.WriteLine("circle " + i.ToString() + " : " + candidateDistance.ToString());
 
@@ -53,8 +63,19 @@ namespace Mill {
                 }
             }
 
-            if (bestCandidateIndex != null) {
-                points[(int)bestCandidateIndex].Occupied = true;
+            if (bestCandidateIndex.HasValue) {
+                selectedPoint = points[(int)bestCandidateIndex];//.Occupied = true;
+            }
+        }
+
+        public static bool HasRayHitGameObject(Vector3 rayCoordinates, Intersection gameobject) {
+
+            var candidateDistance = gameobject.IntersectsRay(rayCoordinates, MainCamera.Position);
+
+            if (candidateDistance.HasValue) {
+                return true;
+            } else {
+                return false;
             }
         }
 
