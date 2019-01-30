@@ -16,6 +16,7 @@ namespace Mill {
 
         public int NumberOfUnplaceMen { get; private set; }
         public List<Intersection> MenOnBoard;
+        public Intersection ManToMove;
 
         public Utils.PlayerState state { get; set; }
 
@@ -46,10 +47,20 @@ namespace Mill {
             }
         }
 
-        public void PlaceManAt(Vector3 location) {
+        public void PlaceManAt(Intersection point) {
 
-            MenOnBoard.Add(new Intersection(0, location));
+            MenOnBoard.Add(point);
             --NumberOfUnplaceMen;
+        }
+
+        public void MoveManAt(Intersection movingPoint) {
+
+            ManToMove.Occupied = false;
+            MenOnBoard.Remove(ManToMove);
+            ManToMove = null;
+
+            MenOnBoard.Add(movingPoint);
+            movingPoint.Occupied = true;
         }
 
         public void Update(double elapsedTime) {
@@ -63,10 +74,35 @@ namespace Mill {
             for (int i = 0; i < MenOnBoard.Count; i++) {
                 GL.Begin(PrimitiveType.Points);
                 GL.Color3((Name == "Blue") ? Color.Blue : Color.Red);
-                GL.Vertex3(MenOnBoard[i].Location);
+                GL.Vertex3(
+                    MenOnBoard[i].Location.X,
+                    MenOnBoard[i].Location.Y, 
+                    0.2f);
+                GL.End();
+            }
+            
+            if (state == Utils.PlayerState.MovingMen && ManToMove != null) {
+
+                GL.LineWidth(5);
+                GL.Begin(PrimitiveType.Lines);
+                GL.Color3((Name == "Blue") ? Color.Blue : Color.Red);
+                for (int i = 0; i < ManToMove.AdjacentPoints.Count; i++) {
+                    if (!ManToMove.AdjacentPoints[i].Occupied) {
+                        GL.Vertex3(
+                            ManToMove.Location.X, 
+                            ManToMove.Location.Y, 
+                            0.2f);
+                        GL.Vertex3(
+                            ManToMove.AdjacentPoints[i].Location.X,
+                            ManToMove.AdjacentPoints[i].Location.Y,
+                            0.2f);
+                    }                    
+                }
                 GL.End();
             }
         }
+
+
 
         
     }

@@ -218,7 +218,8 @@ namespace Mill.Gameobjects {
             }
 
             // Selected point
-            if (SelectedPoint != null) {                
+            if (SelectedPoint != null) {
+                GL.LineWidth(2);
                 GL.Begin(PrimitiveType.LineLoop);
                 GL.Color3(Color.Green);
                 for (int i = 0; i < 360; i++) {

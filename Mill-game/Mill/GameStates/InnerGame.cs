@@ -37,10 +37,15 @@ namespace Mill.GameStates {
             //_gameMaster = new GameManager(Utils.GameType.NineMorris);
             _board = new Board(_gameData.GameType);
 
-            _gameManager = new GameManager(_gameData, _board);
+            _gameManager = new GameManager(_gameData, _input, _board);
         }
 
         public void Update(double elapsedTime) {
+
+            if (_gameData.Winner.HasValue) {
+                OnGameStart();                
+                _system.ChangeState("game_over");
+            }
 
             //_gameTime -= elapsedTime;
             /*
@@ -50,11 +55,8 @@ namespace Mill.GameStates {
                 _system.ChangeState("game_over");
             }
             */
-            MouseInput();
 
             _gameManager.Update(elapsedTime);
-
-
         }
 
         public void Render() {
@@ -63,44 +65,6 @@ namespace Mill.GameStates {
             _gameManager.Render();
         }
 
-        private void MouseInput() {
-
-            if (!_gameManager.ActionIsAllowed()) {
-                return;
-            }
-
-            if (_input.Mouse.LeftPressed) {
-
-                Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
-                //Console.WriteLine(rayCoordinates.X + " " + rayCoordinates.Y + " " + rayCoordinates.Z);
-
-                if (_board.SelectedPoint != null && Utils.HasRayHitGameObject(rayCoordinates, _board.SelectedPoint)) {
-                    _gameManager.PlaceNewMan();                    
-                } else {
-                    Utils.FindClosestIntersectionHitByRay(rayCoordinates, _board.BoardPoints, ref _board.SelectedPoint);
-                }
-
-            }
-
-            if (_input.Mouse.RightPressed) {
-
-                _board.SelectedPoint = null;
-            }
-        }
-
-        private void KeyboardInput() {
-            /*
-            if (_input.Keyboard.IsKeyPressed(Keys.Up)) {
-
-                Console.WriteLine("Up!");
-            }
-
-            if (_input.Keyboard.IsKeyPressed(Keys.T)) {
-
-                Console.WriteLine("R");
-            }
-            */
-        }
 
 
     }

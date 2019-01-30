@@ -65,6 +65,8 @@ namespace Mill {
 
             if (bestCandidateIndex.HasValue) {
                 selectedPoint = points[(int)bestCandidateIndex];//.Occupied = true;
+            } else {
+                selectedPoint = null;
             }
         }
 
