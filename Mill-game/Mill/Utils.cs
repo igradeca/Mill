@@ -5,11 +5,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mill.Engine;
+using Mill.Gameobjects;
 
-namespace Mill.Engine {
+namespace Mill {
     public static class Utils {
 
-        public static Point GridCenter = new Point(0f, 0f);
+        public static Engine.Point GridCenter = new Engine.Point(0f, 0f);
         public static Size GridSize = new Size(10, 10);
         public static float GridPadding = 1f;
         public static float LayerOffset = 1.3333333f;
@@ -32,7 +34,7 @@ namespace Mill.Engine {
 
             for (int i = 0; i < points.Count; i++) {
 
-                points[i].occupied = false;
+                points[i].Occupied = false;
                 var candidateDistance = points[i].IntersectsRay(rayCoordinates, MainCamera.Position);
                 //Console.WriteLine("circle " + i.ToString() + " : " + candidateDistance.ToString());
 
@@ -52,7 +54,7 @@ namespace Mill.Engine {
             }
 
             if (bestCandidateIndex != null) {
-                points[(int)bestCandidateIndex].occupied = true;
+                points[(int)bestCandidateIndex].Occupied = true;
             }
         }
 

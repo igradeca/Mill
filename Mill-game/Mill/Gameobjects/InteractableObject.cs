@@ -1,21 +1,22 @@
-﻿using OpenTK;
+﻿using Mill.Engine;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mill.Engine {
-    public class InteractableObject {
+namespace Mill.Gameobjects {
+    public class InteractableObject : IGameObject {
 
-        public Vector3 location { get; set; }
-        public float detectionRadius { get; set; }
+        public Vector3 Location { get; set; }
+        public float DetectionRadius { get; set; }
 
         public float? IntersectsRay(Vector3 rayDirection, Vector3 rayOrigin) {
 
-            var difference = location - (rayOrigin + rayDirection);
+            var difference = Location - (rayOrigin + rayDirection);
             var differenceLengthSquared = difference.LengthSquared;
-            var sphereRadiusSquared = detectionRadius * detectionRadius;
+            var sphereRadiusSquared = DetectionRadius * DetectionRadius;
 
             if (differenceLengthSquared < sphereRadiusSquared) {
                 return 0f;
@@ -32,6 +33,12 @@ namespace Mill.Engine {
             return result;
         }
 
+        public void Update(double elapsedTime) {
+            throw new NotImplementedException();
+        }
 
+        public void Render() {
+            throw new NotImplementedException();
+        }
     }
 }

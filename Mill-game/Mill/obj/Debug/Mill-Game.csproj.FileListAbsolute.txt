@@ -10,6 +10,6 @@ E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\bin\Deb
 E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\bin\Debug\OpenTK.GLControl.pdb
 E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\bin\Debug\OpenTK.GLControl.xml
 E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\obj\Debug\Mill-Game.csprojResolveAssemblyReference.cache
-E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\obj\Debug\Mill.Engine.Form1.resources
 E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\obj\Debug\Mill.Properties.Resources.resources
 E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\obj\Debug\Mill-Game.csproj.GenerateResource.Cache
+E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\obj\Debug\Mill.Form1.resources

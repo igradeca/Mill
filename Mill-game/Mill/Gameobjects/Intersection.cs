@@ -5,30 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 
-namespace Mill.Engine {
+namespace Mill.Gameobjects {
     public class Intersection : InteractableObject {
 
-        public bool occupied;
-        public List<Intersection> adjacentPoints;
+        public bool Occupied;
+        public List<Intersection> AdjacentPoints;
 
-        public int layer { get; }        
+        public int Layer { get; }        
 
         public Intersection(int layer, Vector3 location, float detectionRadius = 0.3f) {
 
-            this.layer = layer;
-            this.location = new Vector3(
+            Layer = layer;
+            Location = new Vector3(
                 location.X,
                 location.Y,
                 location.Z);
-            this.detectionRadius = detectionRadius;
+            DetectionRadius = detectionRadius;
 
-            occupied = false;
-            adjacentPoints = new List<Intersection>();
+            Occupied = false;
+            AdjacentPoints = new List<Intersection>();
         }
 
         public void AddNewAdjacentPoint(Intersection adjacentPoint) {
 
-            adjacentPoints.Add(adjacentPoint);
+            AdjacentPoints.Add(adjacentPoint);
         }
 
 

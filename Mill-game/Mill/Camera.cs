@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mill.Engine {
+namespace Mill {
     public class Camera {
 
         public Vector3 Position { get; }

@@ -3,7 +3,7 @@ using OpenTK;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace Mill.Engine {
+namespace Mill {
     partial class Form1 {
         /// <summary>
         /// Required designer variable.

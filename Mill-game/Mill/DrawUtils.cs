@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
+using Mill.Gameobjects;
 
-namespace Mill.Engine {
+namespace Mill {
     public class DrawUtils {
 
         public static DrawUtils instance;
@@ -93,7 +94,7 @@ namespace Mill.Engine {
             float DEG2RAD = 3.14159f / 180f;
 
             for (int i = 0; i < testList.Count; i++) {
-                if (testList[i].occupied) {
+                if (testList[i].Occupied) {
                     GL.Color3(Color.Black);
                 } else {
                     GL.Color3(Color.Red);
@@ -102,49 +103,10 @@ namespace Mill.Engine {
                 GL.Begin(PrimitiveType.LineLoop);
                 for (int j = 0; j < 360; j++) {
                     float degInRad = j * DEG2RAD;
-                    GL.Vertex3(Math.Cos(degInRad) * 1f + testList[i].location.X, Math.Sin(degInRad) * 1f + testList[i].location.Y, testList[i].location.Z);
+                    GL.Vertex3(Math.Cos(degInRad) * 1f + testList[i].Location.X, Math.Sin(degInRad) * 1f + testList[i].Location.Y, testList[i].Location.Z);
                 }
                 GL.End();
             }
-        }
-
-        public void RenderGrid(Point[] boardBackground, List<Intersection> boardPoints) {
-            
-            // Board
-            GL.Begin(PrimitiveType.Quads);
-            GL.Color3(Color.SandyBrown);
-            for (int i = 0; i < boardBackground.Length; i++) {
-                GL.Vertex3(
-                boardBackground[i].X,
-                boardBackground[i].Y,
-                -0.05f);
-            }
-            GL.End();
-            
-            // Intersections   
-            GL.PointSize(10);
-            for (int i = 0; i < boardPoints.Count; i++) {
-                if (boardPoints[i].occupied) {
-                    GL.Color3(Color.Black);
-                } else {
-                    GL.Color3(Color.Red);
-                }
-                GL.Begin(PrimitiveType.Points);
-                GL.Vertex3(boardPoints[i].location);
-                GL.End();
-            }
-
-            // Lines
-            GL.LineWidth(2);
-            GL.Begin(PrimitiveType.Lines);
-            GL.Color3(Color.SaddleBrown);
-            for (int i = 0; i < boardPoints.Count; i++) {
-                for (int j = 0; j < boardPoints[i].adjacentPoints.Count; j++) {
-                    GL.Vertex3(boardPoints[i].location);
-                    GL.Vertex3(boardPoints[i].adjacentPoints[j].location);
-                }
-            }
-            GL.End();
         }
 
 

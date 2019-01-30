@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace Mill.Engine {
     class GameMaster : IGameObject {
 
-        //Player bluePlayer;
-        //Player redPlayer;
+        Player bluePlayer;
+        Player redPlayer;
 
-        public Board Board;
+        public Utils.GameType GameType;
         /// <summary>
         /// Number of pieces to lose the game.
         /// </summary>
@@ -40,7 +40,7 @@ namespace Mill.Engine {
                     break;
 
                 case Utils.GameType.NineMorris:
-                    Board = new Board(gameType);
+                    GameType = gameType;
                     MinPiecesNumber = 2;
                     MaxPiecesNumber = 9;
                     break;

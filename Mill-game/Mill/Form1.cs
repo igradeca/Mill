@@ -9,14 +9,17 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
+using Mill.Engine;
+using Mill.Gameobjects;
+using Mill.GameStates;
 
-namespace Mill.Engine {
+namespace Mill {
     public partial class Form1 : Form {
 
+        // Engine essetials
         private FastLoop _fastLoop;
+        private StateSystem _system;
         private Input _input;
-
-        private GameMaster _gameMaster;
 
         private List<Intersection> testList;
 
@@ -30,20 +33,35 @@ namespace Mill.Engine {
             // Instantiate main game loop
             _fastLoop = new FastLoop(GameLoop);
 
-            // Instantiate inputs
+            InitializeInputs();
+            InitializeGameStates();
+            InitializeDisplay();
+
+            //TestPoints();
+        }
+
+        private void InitializeGameStates() {
+
+            _system = new StateSystem();
+            _system.AddState("inner_game", new InnerGame(_system, _input));
+            _system.AddState("game_over", new GameOver(_system, _input));
+            _system.ChangeState("inner_game");
+        }
+
+        private void InitializeInputs() {
+
             _input = new Input();
             _input.Mouse = new MouseInput(this, mainPanel);
             _input.Keyboard = new KeyboardInput(mainPanel);
+        }
 
-            Utils.MainCamera = new Camera();
+        private void InitializeDisplay() {
+
+            //Utils.MainCamera = new Camera();
             Utils.MainCamera = new Camera(new Vector3(0f, 0f, 15f), new Vector3(0f, 0f, 0f));
 
             new DrawUtils(mainPanel.ClientRectangle.Size);
             DrawUtils.instance.InitGL();
-
-            _gameMaster = new GameMaster(Utils.GameType.NineMorris);
-
-            TestPoints();
         }
 
         private void TestPoints() {
@@ -68,27 +86,16 @@ namespace Mill.Engine {
         void GameLoop(double elapsedTime) {
 
             //
-            // Input code here
-            //
-            UpdateInput(elapsedTime);
-            MouseInput();
-            KeyboardInput();
-
-
-            //
             // Update code here
             //
-            //_gameMaster.Update(elapsedTime);
-
+            UpdateInput(elapsedTime);
+            _system.Update(elapsedTime);
 
             //
             // Render code here
             //            
             DrawUtils.instance.OnRender();
-            //DrawUtils.instance.RenderTestCircles(testList);
-            DrawUtils.instance.RenderGrid(_gameMaster.Board.boardBackground, _gameMaster.Board.boardPoints);
-            //_gameMaster.Render();
-
+            _system.Render();
 
             //
             // Refresh screen
@@ -101,30 +108,6 @@ namespace Mill.Engine {
 
             _input.Update(elapsedTime);
         }
-
-        private void MouseInput() {
-
-            if (_input.Mouse.LeftPressed) {
-                
-                Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
-                //Console.WriteLine(rayCoordinates.X + " " + rayCoordinates.Y + " " + rayCoordinates.Z);
-                Utils.FindClosestIntersectionHitByRay(rayCoordinates, _gameMaster.Board.boardPoints);                
-            }
-        }
-
-        private void KeyboardInput() {
-
-            if (_input.Keyboard.IsKeyPressed(Keys.Up)) {
-
-                Console.WriteLine("Up!");
-            }
-
-            if (_input.Keyboard.IsKeyPressed(Keys.T)) {
-
-                Console.WriteLine("R");
-            }
-        }
-
 
     }
 }

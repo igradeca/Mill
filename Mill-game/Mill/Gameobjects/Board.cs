@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
+using Mill.Engine;
 
-namespace Mill.Engine {
-    public class Board {
+namespace Mill.Gameobjects {
+    public class Board : IGameObject {
 
-        public Point[] boardBackground;
+        public Engine.Point[] boardBackground;
 
         public List<Intersection> boardPoints;
         public int layersNum;
@@ -20,20 +23,22 @@ namespace Mill.Engine {
             SetBoard(gameType);
         }
 
+        #region SettingBoard
+
         private void SetBoardBackground() {
 
-            boardBackground = new Point[4];
+            boardBackground = new Engine.Point[4];
 
-            boardBackground[0] = new Point(
+            boardBackground[0] = new Engine.Point(
                 Utils.GridSize.Width / 2f, 
                 Utils.GridSize.Height / 2f);
-            boardBackground[1] = new Point(
+            boardBackground[1] = new Engine.Point(
                 -Utils.GridSize.Width / 2f,
                 Utils.GridSize.Height / 2f);
-            boardBackground[2] = new Point(
+            boardBackground[2] = new Engine.Point(
                 -Utils.GridSize.Width / 2f,
                 -Utils.GridSize.Height / 2f);
-            boardBackground[3] = new Point(
+            boardBackground[3] = new Engine.Point(
                 Utils.GridSize.Width / 2f,
                 -Utils.GridSize.Height / 2f);
         }
@@ -120,7 +125,7 @@ namespace Mill.Engine {
 
             for (int i = 0; i < boardPoints.Count; i++) {
 
-                boardPoints[i].adjacentPoints = new List<Intersection>();
+                boardPoints[i].AdjacentPoints = new List<Intersection>();
                 FindAdjacentPoints(i);
             }
         }
@@ -132,39 +137,39 @@ namespace Mill.Engine {
             bool lookLeft  = true;
             bool lookRight = true;
 
-            for (int i = 1; i <= (layersNum - boardPoints[index].layer); i++) {
+            for (int i = 1; i <= (layersNum - boardPoints[index].Layer); i++) {
                 for (int j = 0; j < boardPoints.Count; j++) {
                     if (j == index) {
                         continue;
                     } else {                        
                         if (lookLeft) {
-                            if (CheckPoint(boardPoints[index].location.X + (Utils.LayerOffset * i),
-                                boardPoints[index].location.Y, j)) {
-                                boardPoints[index].adjacentPoints.Add(boardPoints[j]);
+                            if (CheckPoint(boardPoints[index].Location.X + (Utils.LayerOffset * i),
+                                boardPoints[index].Location.Y, j)) {
+                                boardPoints[index].AdjacentPoints.Add(boardPoints[j]);
                                 lookLeft = false;
                             }
                         }
                         
                         if (lookRight) {
-                            if (CheckPoint(boardPoints[index].location.X - (Utils.LayerOffset * i),
-                                boardPoints[index].location.Y, j)) {
-                                boardPoints[index].adjacentPoints.Add(boardPoints[j]);
+                            if (CheckPoint(boardPoints[index].Location.X - (Utils.LayerOffset * i),
+                                boardPoints[index].Location.Y, j)) {
+                                boardPoints[index].AdjacentPoints.Add(boardPoints[j]);
                                 lookRight = false;
                             }
                         }
                         
                         if (lookUp) {
-                            if (CheckPoint(boardPoints[index].location.X,
-                                boardPoints[index].location.Y + (Utils.LayerOffset * i), j)) {
-                                boardPoints[index].adjacentPoints.Add(boardPoints[j]);
+                            if (CheckPoint(boardPoints[index].Location.X,
+                                boardPoints[index].Location.Y + (Utils.LayerOffset * i), j)) {
+                                boardPoints[index].AdjacentPoints.Add(boardPoints[j]);
                                 lookUp = false;
                             }
                         }
                         
                         if (lookDown) {
-                            if (CheckPoint(boardPoints[index].location.X,
-                                boardPoints[index].location.Y - (Utils.LayerOffset * i), j)) {
-                                boardPoints[index].adjacentPoints.Add(boardPoints[j]);
+                            if (CheckPoint(boardPoints[index].Location.X,
+                                boardPoints[index].Location.Y - (Utils.LayerOffset * i), j)) {
+                                boardPoints[index].AdjacentPoints.Add(boardPoints[j]);
                                 lookDown = false;
                             }
                         }
@@ -175,11 +180,56 @@ namespace Mill.Engine {
 
         private bool CheckPoint(float X, float Y, int index) {
 
-            if (Math.Abs(boardPoints[index].location.X - X) < 0.1f && Math.Abs(boardPoints[index].location.Y - Y) < 0.1f) {
+            if (Math.Abs(boardPoints[index].Location.X - X) < 0.1f && Math.Abs(boardPoints[index].Location.Y - Y) < 0.1f) {
                 return true;
             } else {
                 return false;
             }
+        }
+
+        #endregion
+
+        public void Update(double elapsedTime) {
+
+        }
+
+        public void Render() {
+
+            // Board
+            GL.Begin(PrimitiveType.Quads);
+            GL.Color3(Color.SandyBrown);
+            for (int i = 0; i < boardBackground.Length; i++) {
+                GL.Vertex3(
+                boardBackground[i].X,
+                boardBackground[i].Y,
+                -0.05f);
+            }
+            GL.End();
+
+            // Intersections   
+            GL.PointSize(10);
+            for (int i = 0; i < boardPoints.Count; i++) {
+                if (boardPoints[i].Occupied) {
+                    GL.Color3(Color.Red);
+                } else {
+                    GL.Color3(Color.Black);
+                }
+                GL.Begin(PrimitiveType.Points);
+                GL.Vertex3(boardPoints[i].Location);
+                GL.End();
+            }
+
+            // Lines
+            GL.LineWidth(2);
+            GL.Begin(PrimitiveType.Lines);
+            GL.Color3(Color.SaddleBrown);
+            for (int i = 0; i < boardPoints.Count; i++) {
+                for (int j = 0; j < boardPoints[i].AdjacentPoints.Count; j++) {
+                    GL.Vertex3(boardPoints[i].Location);
+                    GL.Vertex3(boardPoints[i].AdjacentPoints[j].Location);
+                }
+            }
+            GL.End();
         }
 
 

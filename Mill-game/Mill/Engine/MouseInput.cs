@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Mill.Engine {
-    class MouseInput {
+    public class MouseInput {
 
         private Form _parentForm;
         private Control _openTKControl;

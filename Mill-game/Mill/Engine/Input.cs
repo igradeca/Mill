@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Mill.Engine {
-    class Input {
+    public class Input {
 
         public MouseInput Mouse { get; set; }
         public KeyboardInput Keyboard { get; set; }
