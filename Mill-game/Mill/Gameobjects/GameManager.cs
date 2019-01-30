@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Mill.Engine {
-    class GameMaster : IGameObject {
+    public class GameManager {
 
-        Player bluePlayer;
-        Player redPlayer;
+        public bool? Winner { get; set; }
 
         public Utils.GameType GameType;
         /// <summary>
@@ -25,7 +24,9 @@ namespace Mill.Engine {
         /// <summary>
         /// Starts new game.
         /// </summary>
-        public GameMaster(Utils.GameType gameType) {
+        public GameManager(Utils.GameType gameType) {
+
+            Winner = null;
 
             SetGameRules(gameType);
         }
@@ -52,15 +53,6 @@ namespace Mill.Engine {
                     break;
             }
         }
-
-        public void Update(double elapsedTime) {
-
-        }
-
-        public void Render() {
-
-        }
-
 
     }
 }

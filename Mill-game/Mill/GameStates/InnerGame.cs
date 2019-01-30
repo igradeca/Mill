@@ -16,22 +16,23 @@ namespace Mill.GameStates {
         private double _gameTime;
 
         // Gameobjects
-        private GameMaster _gameMaster;
+        private GameManager _gameMaster;
         private Board _board;
 
-        public InnerGame(StateSystem system, Input input) {
+        public InnerGame(StateSystem system, Input input, GameManager gameManager) {
 
             _system = system;
             _input = input;
+            _gameMaster = gameManager;
 
             OnGameStart();
         }
 
         public void OnGameStart() {
 
-            _gameTime = 10f; // current game time
+            _gameTime = 5f; // current game time
 
-            _gameMaster = new GameMaster(Utils.GameType.NineMorris);
+            //_gameMaster = new GameManager(Utils.GameType.NineMorris);
             _board = new Board(Utils.GameType.NineMorris);
         }
 
@@ -40,7 +41,9 @@ namespace Mill.GameStates {
             _gameTime -= elapsedTime;
 
             if (_gameTime <= 0) {
+                
                 OnGameStart();
+                _gameMaster.Winner = true;
                 _system.ChangeState("game_over");
             }
 
