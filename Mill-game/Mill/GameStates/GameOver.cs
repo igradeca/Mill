@@ -7,6 +7,8 @@ using Mill.Engine;
 using Mill.Gameobjects;
 using OpenTK;
 using System.Windows.Forms;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace Mill.GameStates {
     public class GameOver : IGameObject {
@@ -33,7 +35,10 @@ namespace Mill.GameStates {
         }
 
         public void Render() {
-            //throw new NotImplementedException();
+
+            GL.ClearColor(Color.Black);
+
+
         }
 
 

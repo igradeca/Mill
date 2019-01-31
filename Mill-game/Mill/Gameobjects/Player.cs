@@ -69,22 +69,21 @@ namespace Mill {
             MenOnBoard.Remove(point);
         }
 
-        public bool HasThreeMenLined() {
+        public bool ThreeManLined(Intersection movingPoint) {
 
-            // We need check only the one which we moved this turn, not all of them!
-            for (int i = 0; i < MenOnBoard.Count; i++) {
-                if (MenOnBoard[i].AdjacentPoints.Count >= 3) {
-                    List<Intersection> matchX = MenOnBoard[i].AdjacentPoints.FindAll(x => x.Location.X == MenOnBoard[i].Location.X);
-                    List<Intersection> matchY = MenOnBoard[i].AdjacentPoints.FindAll(x => x.Location.Y == MenOnBoard[i].Location.Y);
-                    var resultX = MenOnBoard.Intersect(matchX);
-                    var resultY = MenOnBoard.Intersect(matchY);
+            List<Intersection> tempList = MenOnBoard.FindAll(elem => elem.AdjacentPoints.Count >= 3);
 
-                    if (resultX.ToList().Count == 2 || resultY.ToList().Count == 2) {
-                        return true;
-                    }
+            for (int i = 0; i < tempList.Count; i++) {
+                List<Intersection> matchX = tempList[i].AdjacentPoints.FindAll(elem => elem.Location.X == tempList[i].Location.X);
+                List<Intersection> matchY = tempList[i].AdjacentPoints.FindAll(elem => elem.Location.Y == tempList[i].Location.Y);
+                matchX = MenOnBoard.Intersect(matchX).ToList();
+                matchY = MenOnBoard.Intersect(matchY).ToList();
+
+                if ((matchX.Count == 2 && (matchX.Exists(elem => elem == movingPoint) || tempList[i] == movingPoint)) ||
+                    (matchY.Count == 2 && (matchY.Exists(elem => elem == movingPoint) || tempList[i] == movingPoint))) {
+                    return true;
                 }
             }
-
             return false;
         }
 

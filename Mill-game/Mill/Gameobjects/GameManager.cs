@@ -114,7 +114,7 @@ namespace Mill.Gameobjects {
                     RemoveOpponentsMan();
                     break;
                 case Utils.PlayerState.GameOver:
-                    Console.WriteLine("It is game over.");
+                    Console.WriteLine("Game over.");
                     break;
             }
         }
@@ -125,15 +125,18 @@ namespace Mill.Gameobjects {
                 _board.HoveringPoint.Occupied = true;
                 _playerAtTurn.PlaceManAt(_board.HoveringPoint);
 
-                if (_playerAtTurn.HasThreeMenLined()) {
+                if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
                     Console.WriteLine("Three Men Lined! BINGO!");
                     _board.HoveringPoint = null;
                     _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
+
                 } else {
                     EndTurn();
+
                 }
             } else {
                 Console.WriteLine("This point is occupied! You cannot place your man here!");
+
             }
         }
 
@@ -141,10 +144,11 @@ namespace Mill.Gameobjects {
 
             if (_board.HoveringPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.HoveringPoint.Location)) {
                 _playerAtTurn.SelectedMan = _board.HoveringPoint;
+
             } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied && ArePointsAdjacent(_playerAtTurn.SelectedMan, _board.HoveringPoint)) {              
                 _playerAtTurn.MoveManAt(_board.HoveringPoint);
 
-                if (_playerAtTurn.HasThreeMenLined()) {
+                if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
                     Console.WriteLine("Three Men Lined! BINGO!");
                     _board.HoveringPoint = null;
                     _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
@@ -167,10 +171,11 @@ namespace Mill.Gameobjects {
 
             if (_board.HoveringPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.HoveringPoint.Location)) {
                 _playerAtTurn.SelectedMan = _board.HoveringPoint;
+
             } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied) {
                 _playerAtTurn.MoveManAt(_board.HoveringPoint);
 
-                if (_playerAtTurn.HasThreeMenLined()) {
+                if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
                     Console.WriteLine("Three Men Lined! BINGO!");
                     _board.HoveringPoint = null;
                     _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
@@ -184,6 +189,7 @@ namespace Mill.Gameobjects {
 
             Player opponent = (_playerAtTurn == _bluePlayer) ? _redPlayer : _bluePlayer;
             Console.WriteLine("Opponent is " + opponent.Name + " player");
+
             if (_board.HoveringPoint.Occupied && opponent.MenOnBoard.Exists(x => x == _board.HoveringPoint)) {
                 opponent.RemoveMan(_board.HoveringPoint);
                 Console.WriteLine("One man down.");

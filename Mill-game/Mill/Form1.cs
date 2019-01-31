@@ -46,9 +46,9 @@ namespace Mill {
         private void InitializeGameStates() {
 
             _system = new StateSystem();
-            _system.AddState("inner_game", new InnerGame(_system, _input, _gameManager));
+            //_system.AddState("inner_game", new InnerGame(_system, _input, _gameManager));
             _system.AddState("game_over", new GameOver(_system, _input, _gameManager));
-            _system.ChangeState("inner_game");
+            _system.ChangeState("game_over");
         }
 
         private void InitializeInputs() {
