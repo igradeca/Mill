@@ -20,7 +20,7 @@ namespace Mill {
         private FastLoop _fastLoop;
         private StateSystem _system;
         private Input _input;
-        private GameData _gameManager;
+        private GameData _gameData;
 
         private List<Intersection> testList;
 
@@ -34,9 +34,9 @@ namespace Mill {
             // Instantiate main game loop
             _fastLoop = new FastLoop(GameLoop);
 
-            _gameManager = new GameData(Utils.GameType.NineMorris);
+            _gameData = new GameData(Utils.GameType.NineMorris);
 
-            Engine.Text.LoadTexture(Engine.Text.FontBitmapFilename);
+            Engine.Text.FontTextureID = Engine.Text.LoadTexture(Engine.Text.FontBitmapFilename);
 
             InitializeInputs();
             InitializeGameStates();
@@ -48,9 +48,9 @@ namespace Mill {
         private void InitializeGameStates() {
 
             _system = new StateSystem();
-            _system.AddState("game_begin", new GameBegin(_system, _input));
-            //_system.AddState("inner_game", new InnerGame(_system, _input, _gameManager));
-            _system.AddState("game_over", new GameOver(_system, _input, _gameManager));
+            _system.AddState("game_begin", new GameBegin(_system, _input, _gameData));
+            _system.AddState("inner_game", new InnerGame(_system, _input, _gameData));
+            _system.AddState("game_over", new GameOver(_system, _input, _gameData));
             _system.ChangeState("game_begin");
         }
 

@@ -12,13 +12,15 @@ namespace Mill.GameStates {
 
         private StateSystem _system;
         private Input _input;
+        private GameData _gameData;
 
         private string _textToDisplay;
 
-        public GameBegin(StateSystem system, Input input) {
+        public GameBegin(StateSystem system, Input input, GameData gameData) {
 
             _system = system;
             _input = input;
+            _gameData = gameData;
 
             _textToDisplay =
             "Mill - Nine Men's Morris\\n\\n" +
@@ -36,16 +38,17 @@ namespace Mill.GameStates {
 
             if (_input.Keyboard.IsKeyPressed(System.Windows.Forms.Keys.Enter)) {
                 Console.WriteLine("Start game...");
+                //Text.RemoveTexture();
+                _system.ChangeState("inner_game");
             }
         }
 
         public void Render() {
 
             GL.ClearColor(Color.Black);
-            //GL.Enable(EnableCap.Blend);
-            
+            GL.Enable(EnableCap.Texture2D);
+
             DrawUtils.instance.RenderText(new OpenTK.Vector3(-10.5f, 6.5f, -4.9f), _textToDisplay, 24, 0.04f);
-            //DrawUtils.instance.RenderGui();
         }
 
 

@@ -97,7 +97,7 @@ namespace Mill {
             GL.PointSize(20);
             for (int i = 0; i < MenOnBoard.Count; i++) {
                 GL.Begin(PrimitiveType.Points);
-                GL.Color3((Name == "Blue") ? Color.Blue : Color.Red);
+                GL.Color3((Name == "Blue") ? Color.RoyalBlue : Color.Red);
                 GL.Vertex3(
                     MenOnBoard[i].Location.X,
                     MenOnBoard[i].Location.Y, 

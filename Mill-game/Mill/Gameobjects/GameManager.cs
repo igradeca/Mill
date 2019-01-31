@@ -22,6 +22,9 @@ namespace Mill.Gameobjects {
 
         private Player _playerAtTurn;
 
+        private string _playerInfoText;
+        private string _statusText;
+
         public GameManager(GameData gameData, Input input, Board board) {
 
             _gameData = gameData;
@@ -31,7 +34,11 @@ namespace Mill.Gameobjects {
             _bluePlayer = new Player("Blue", _gameData.MaxPiecesNumber);
             _redPlayer = new Player("Red", _gameData.MaxPiecesNumber);
 
-            _playerAtTurn = _bluePlayer;
+            _playerInfoText = "";
+            _statusText = "";
+
+            _playerAtTurn = _redPlayer;
+            StartNextTurn();
         }
 
         public void Update(double elapsedTime) {
@@ -75,20 +82,6 @@ namespace Mill.Gameobjects {
             }
         }
 
-        private void KeyboardInput() {
-            /*
-            if (_input.Keyboard.IsKeyPressed(Keys.Up)) {
-
-                Console.WriteLine("Up!");
-            }
-
-            if (_input.Keyboard.IsKeyPressed(Keys.T)) {
-
-                Console.WriteLine("R");
-            }
-            */
-        }
-
         private bool PointSelected() {
 
             if (_board.HoveringPoint != null) {
@@ -113,7 +106,7 @@ namespace Mill.Gameobjects {
                 case Utils.PlayerState.RemoveOpponentsMan:
                     RemoveOpponentsMan();
                     break;
-                case Utils.PlayerState.GameOver:
+                case Utils.PlayerState.GameOver:                    
                     Console.WriteLine("Game over.");
                     break;
             }
@@ -121,11 +114,13 @@ namespace Mill.Gameobjects {
         public void PlaceNewMan() {
 
             if (_board.HoveringPoint.Occupied == false) {
+                StatusToRender(Utils.GameInfo.MenPlaced);
                 Console.WriteLine(_playerAtTurn.Name + " is placing man...");
                 _board.HoveringPoint.Occupied = true;
                 _playerAtTurn.PlaceManAt(_board.HoveringPoint);
 
                 if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
+                    StatusToRender(Utils.GameInfo.ThreeMenLined);
                     Console.WriteLine("Three Men Lined! BINGO!");
                     _board.HoveringPoint = null;
                     _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
@@ -135,6 +130,7 @@ namespace Mill.Gameobjects {
 
                 }
             } else {
+                StatusToRender(Utils.GameInfo.CannotPlace);
                 Console.WriteLine("This point is occupied! You cannot place your man here!");
 
             }
@@ -149,6 +145,7 @@ namespace Mill.Gameobjects {
                 _playerAtTurn.MoveManAt(_board.HoveringPoint);
 
                 if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
+                    StatusToRender(Utils.GameInfo.ThreeMenLined);
                     Console.WriteLine("Three Men Lined! BINGO!");
                     _board.HoveringPoint = null;
                     _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
@@ -176,6 +173,7 @@ namespace Mill.Gameobjects {
                 _playerAtTurn.MoveManAt(_board.HoveringPoint);
 
                 if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
+                    StatusToRender(Utils.GameInfo.ThreeMenLined);
                     Console.WriteLine("Three Men Lined! BINGO!");
                     _board.HoveringPoint = null;
                     _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
@@ -188,10 +186,12 @@ namespace Mill.Gameobjects {
         public void RemoveOpponentsMan() {
 
             Player opponent = (_playerAtTurn == _bluePlayer) ? _redPlayer : _bluePlayer;
+            StatusToRender(Utils.GameInfo.SelectOpponent);
             Console.WriteLine("Opponent is " + opponent.Name + " player");
 
             if (_board.HoveringPoint.Occupied && opponent.MenOnBoard.Exists(x => x == _board.HoveringPoint)) {
                 opponent.RemoveMan(_board.HoveringPoint);
+                StatusToRender(Utils.GameInfo.ManDown);
                 Console.WriteLine("One man down.");
                 EndTurn();
             }
@@ -216,6 +216,8 @@ namespace Mill.Gameobjects {
 
             _playerAtTurn = (_playerAtTurn.Name == _bluePlayer.Name) ? _redPlayer : _bluePlayer;
             _playerAtTurn.StartTurn();
+
+            StatusToRender(Utils.GameInfo.TurnBegin);
             Console.WriteLine(_playerAtTurn.Name + "'s turn! " + _playerAtTurn.state.ToString() + " men: " + _playerAtTurn.MenOnBoard.Count.ToString());
 
             _board.HoveringPoint = null;
@@ -231,10 +233,51 @@ namespace Mill.Gameobjects {
             }
         }
 
+        public void StatusToRender(Utils.GameInfo status) {
+
+            switch (status) {
+                case Utils.GameInfo.TurnBegin:
+                    _playerInfoText = _playerAtTurn.Name + " player\\n" 
+                        + "Men on board: " + _playerAtTurn.MenOnBoard.Count;
+
+                    _statusText = _playerAtTurn.Name + "'s turn!";
+                    if (_playerAtTurn.NumberOfUnplaceMen > 0) {
+                        _statusText += " Place new man.";
+                    } else if (_playerAtTurn.MenOnBoard.Count > 3) {
+                        _statusText += " Move your men.";
+                    } else {
+                        _statusText += " Fly mode!";
+                    }
+                    break;
+                case Utils.GameInfo.MenPlaced:
+                    _statusText = "Men is placed.";
+                    break;
+                case Utils.GameInfo.ThreeMenLined:
+                    _statusText = "Three men lined! Remove one.";
+                    break;
+                case Utils.GameInfo.CannotPlace:
+                    _statusText = "Can't place here.";
+                    break;
+                case Utils.GameInfo.SelectOpponent:
+                    _statusText = "Select one of opponents men.";
+                    break;
+                case Utils.GameInfo.ManDown:
+                    _statusText = "One man down!";
+                    break;
+            }
+        }
+
         public void Render() {
 
             _bluePlayer.Render();
             _redPlayer.Render();
+
+            GL.Enable(EnableCap.Texture2D);
+            GL.Color3((_playerAtTurn.Name == "Blue") ? Color.RoyalBlue : Color.Red);
+            DrawUtils.instance.RenderText(new Vector3(-6f, 4f, 4f), _playerInfoText, 40, 0.02f);
+            GL.Color3(Color.White);
+            DrawUtils.instance.RenderText(new Vector3(-6f, -4.5f, 4f), _statusText, 40, 0.02f);
+            GL.Disable(EnableCap.Texture2D);            
         }
 
 

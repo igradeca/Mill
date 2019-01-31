@@ -28,13 +28,13 @@ namespace Mill.Engine {
             using (var bitmap = new Bitmap(filename)) {
 
                 var texId = GL.GenTexture();
-                GL.BindTexture(TextureTarget.Texture2D, FontTextureID);
+                GL.BindTexture(TextureTarget.Texture2D, texId);
 
                 BitmapData data = bitmap.LockBits(
                     new Rectangle(0, 0, bitmap.Width, bitmap.Height), 
                     ImageLockMode.ReadOnly, 
                     System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
+                
                 GL.TexImage2D(
                     TextureTarget.Texture2D, 
                     0, 
@@ -45,7 +45,7 @@ namespace Mill.Engine {
                     OpenTK.Graphics.OpenGL.PixelFormat.Bgra, 
                     PixelType.UnsignedByte, 
                     data.Scan0);
-
+                    
                 bitmap.UnlockBits(data);
 
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
@@ -54,6 +54,11 @@ namespace Mill.Engine {
 
                 return texId;
             }
+        }
+
+        public static void RemoveTexture() {
+
+            GL.DeleteTexture(FontTextureID);
         }
 
 

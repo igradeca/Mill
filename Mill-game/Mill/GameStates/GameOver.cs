@@ -15,30 +15,39 @@ namespace Mill.GameStates {
 
         private StateSystem _system;
         private Input _input;
-        private GameData _gameManager;
+        private GameData _gameData;
 
-        public GameOver(StateSystem system, Input input, GameData gameManager) {
+        private string _textToDisplay;
+
+        public GameOver(StateSystem system, Input input, GameData gameData) {
 
             _system = system;
             _input = input;
-            _gameManager = gameManager;
+            _gameData = gameData;
+
+            _textToDisplay = "";
         }
 
         public void Update(double elapsedTime) {
 
-            if (_input.Keyboard.IsKeyPressed(Keys.Enter)) {
-                Console.WriteLine("Game Over!");
-                Console.WriteLine("Player " + ((_gameManager.Winner == true) ? "blue" : "red") + " won!");
+            if (_textToDisplay == "") {
+                _textToDisplay = "Game Over!\\n" + ((_gameData.Winner == true) ? "Blue" : "Red") + " player won!";
             }
-            //
-            //throw new NotImplementedException();
+
+            if (_input.Keyboard.IsKeyPressed(Keys.Enter)) {
+                _textToDisplay = "";
+                _gameData.Winner = null;
+                _system.ChangeState("game_begin");
+            }
         }
 
         public void Render() {
 
             GL.ClearColor(Color.Black);
+            GL.Enable(EnableCap.Texture2D);
+            GL.Color3(Color.White);
 
-
+            DrawUtils.instance.RenderText(new Vector3(-1f, 0f, -4.9f), _textToDisplay, 50, 0.04f);
         }
 
 

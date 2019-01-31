@@ -38,6 +38,16 @@ namespace Mill {
             GameOver
         }
 
+        public enum GameInfo {
+
+            TurnBegin,
+            MenPlaced,
+            ThreeMenLined,
+            CannotPlace,
+            SelectOpponent,
+            ManDown
+        }
+
         public static void FindClosestIntersectionHitByRay(Vector3 rayCoordinates, List<Intersection> points, ref Intersection selectedPoint) {
 
             int? bestCandidateIndex = null;

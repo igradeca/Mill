@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Mill.Engine;
 using Mill.Gameobjects;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using System.Windows.Forms;
 
 namespace Mill.GameStates {
     public class InnerGame : IGameObject {
@@ -32,7 +34,7 @@ namespace Mill.GameStates {
         public void OnGameStart() {
 
             //_gameTime = 5f; // current game time
-            _gameData.Winner = null;
+            //_gameData.Winner = null;
 
             //_gameMaster = new GameManager(Utils.GameType.NineMorris);
             _board = new Board(_gameData.GameType);
@@ -42,6 +44,8 @@ namespace Mill.GameStates {
 
         public void Update(double elapsedTime) {
 
+            KeyboardInput();
+
             if (_gameData.Winner.HasValue) {
                 OnGameStart();                
                 _system.ChangeState("game_over");
@@ -50,8 +54,18 @@ namespace Mill.GameStates {
             _gameManager.Update(elapsedTime);
         }
 
+        private void KeyboardInput() {
+
+            if (_input.Keyboard.IsKeyPressed(Keys.R)) {
+
+                OnGameStart();
+                _system.ChangeState("game_begin");
+            }
+        }
+
         public void Render() {
 
+            
             _board.Render();
             _gameManager.Render();
         }

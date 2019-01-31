@@ -38,7 +38,7 @@ namespace Mill {
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Texture2D);
-            GL.Disable(EnableCap.Lighting);
+            //GL.Disable(EnableCap.Lighting);
 
             GL.Viewport(_panelSize);
 
@@ -131,7 +131,8 @@ namespace Mill {
 
                 position.X += Text.CharXSpacing * scale;
 
-                if (position.X > (Text.CharXSpacing * scale * charPerLine)) {
+                if (position.X > (Text.CharXSpacing * scale) * charPerLine) {
+
                     position.X = initXPosition;
                     position.Y -= Text.CharYSpacing * scale;
                 }

@@ -197,6 +197,8 @@ namespace Mill.Gameobjects {
 
         public void Render() {
 
+            GL.ClearColor(Color.LightGray);
+
             // Board
             GL.Begin(PrimitiveType.Quads);
             GL.Color3(Color.SandyBrown);
@@ -227,7 +229,7 @@ namespace Mill.Gameobjects {
                     GL.Vertex3(
                         HoveringPoint.Location.X + Math.Cos(degInRad) * 0.5f,
                         HoveringPoint.Location.Y + Math.Sin(degInRad) * 0.5f,
-                        0f);
+                        0.3f);
                 }
                 GL.End();
             }
