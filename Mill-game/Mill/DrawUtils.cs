@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL;
 using Mill.Gameobjects;
+using Mill.Engine;
 
 namespace Mill {
     public class DrawUtils {
@@ -36,6 +37,7 @@ namespace Mill {
             GL.ClearColor(Color.LightGray);
 
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Lighting);
 
             GL.Viewport(_panelSize);
@@ -87,6 +89,55 @@ namespace Mill {
             rayWorldCoordinates.Normalize();
 
             return rayWorldCoordinates;
+        }
+
+        public void RenderText(Vector3 position, string text, int charPerLine, float scale = 0.1f) {
+
+            float initXPosition = position.X;
+
+            GL.Begin(PrimitiveType.Quads);
+
+            float u_step = (float)Text.GlyphWidth / (float)Text.TextureWidth;
+            float v_step = (float)Text.GlyphHeight / (float)Text.TextureHeight;
+
+            char idx = ' ';
+            for (int n = 0; n < text.Length; n++) {
+                
+                if (text[n] == '\\') {
+                    idx = text[n];
+                    continue;
+                } else if (idx == '\\' && text[n] == 'n') {
+                    position.X = initXPosition;
+                    position.Y -= Text.CharYSpacing * scale;
+                    idx = text[n];
+                    continue;
+                } else {
+                    idx = text[n];
+                }
+                
+                idx = text[n];
+
+                float u = (float)(idx % Text.GlyphsPerLine) * u_step;
+                float v = (float)(idx / Text.GlyphsPerLine) * v_step;
+
+                GL.TexCoord2(u, v);
+                GL.Vertex3(position.X, position.Y + Text.GlyphHeight * scale, position.Z);
+                GL.TexCoord2(u + u_step, v);
+                GL.Vertex3(position.X + Text.GlyphWidth * scale, position.Y + Text.GlyphHeight * scale, position.Z);
+                GL.TexCoord2(u + u_step, v + v_step);
+                GL.Vertex3(position.X + Text.GlyphWidth * scale, position.Y, position.Z);
+                GL.TexCoord2(u, v + v_step);
+                GL.Vertex3(position.X, position.Y, position.Z);
+
+                position.X += Text.CharXSpacing * scale;
+
+                if (position.X > (Text.CharXSpacing * scale * charPerLine)) {
+                    position.X = initXPosition;
+                    position.Y -= Text.CharYSpacing * scale;
+                }
+            }
+
+            GL.End();
         }
 
         public void RenderTestCircles(List<Intersection> testList) {

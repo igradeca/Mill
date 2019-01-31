@@ -36,6 +36,8 @@ namespace Mill {
 
             _gameManager = new GameData(Utils.GameType.NineMorris);
 
+            Engine.Text.LoadTexture(Engine.Text.FontBitmapFilename);
+
             InitializeInputs();
             InitializeGameStates();
             InitializeDisplay();
@@ -49,7 +51,7 @@ namespace Mill {
             _system.AddState("game_begin", new GameBegin(_system, _input));
             //_system.AddState("inner_game", new InnerGame(_system, _input, _gameManager));
             _system.AddState("game_over", new GameOver(_system, _input, _gameManager));
-            _system.ChangeState("game_over");
+            _system.ChangeState("game_begin");
         }
 
         private void InitializeInputs() {

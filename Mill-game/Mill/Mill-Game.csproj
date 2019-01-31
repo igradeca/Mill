@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\Text.cs" />
     <Compile Include="Gameobjects\Board.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="DrawUtils.cs" />
