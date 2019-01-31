@@ -78,6 +78,7 @@
     <Compile Include="Gameobjects\Intersection.cs" />
     <Compile Include="Gameobjects\Player.cs" />
     <Compile Include="Engine\PreciseTimer.cs" />
+    <Compile Include="GameStates\GameBegin.cs" />
     <Compile Include="GameStates\GameOver.cs" />
     <Compile Include="GameStates\InnerGame.cs" />
     <Compile Include="Program.cs" />
