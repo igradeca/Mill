@@ -17,7 +17,7 @@ namespace Mill.Gameobjects {
         public int LayersNum;
         public int BoardPointsNum;
 
-        public Intersection SelectedPoint;
+        public Intersection HoveringPoint;
 
         public Board(Utils.GameType gameType) {
 
@@ -218,15 +218,15 @@ namespace Mill.Gameobjects {
             }
 
             // Selected point
-            if (SelectedPoint != null) {
+            if (HoveringPoint != null) {
                 GL.LineWidth(2);
                 GL.Begin(PrimitiveType.LineLoop);
                 GL.Color3(Color.Green);
                 for (int i = 0; i < 360; i++) {
                     float degInRad = i * Utils.DEG2RAD;
                     GL.Vertex3(
-                        SelectedPoint.Location.X + Math.Cos(degInRad) * 0.5f,
-                        SelectedPoint.Location.Y + Math.Sin(degInRad) * 0.5f,
+                        HoveringPoint.Location.X + Math.Cos(degInRad) * 0.5f,
+                        HoveringPoint.Location.Y + Math.Sin(degInRad) * 0.5f,
                         0f);
                 }
                 GL.End();

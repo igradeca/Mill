@@ -16,7 +16,7 @@ namespace Mill {
 
         public int NumberOfUnplaceMen { get; private set; }
         public List<Intersection> MenOnBoard;
-        public Intersection ManToMove;
+        public Intersection SelectedMan;
 
         public Utils.PlayerState state { get; set; }
 
@@ -55,12 +55,37 @@ namespace Mill {
 
         public void MoveManAt(Intersection movingPoint) {
 
-            ManToMove.Occupied = false;
-            MenOnBoard.Remove(ManToMove);
-            ManToMove = null;
+            SelectedMan.Occupied = false;
+            MenOnBoard.Remove(SelectedMan);
+            SelectedMan = null;
 
             MenOnBoard.Add(movingPoint);
             movingPoint.Occupied = true;
+        }
+
+        public void RemoveMan(Intersection point) {
+
+            point.Occupied = false;
+            MenOnBoard.Remove(point);
+        }
+
+        public bool HasThreeMenLined() {
+
+            // We need check only the one which we moved this turn, not all of them!
+            for (int i = 0; i < MenOnBoard.Count; i++) {
+                if (MenOnBoard[i].AdjacentPoints.Count >= 3) {
+                    List<Intersection> matchX = MenOnBoard[i].AdjacentPoints.FindAll(x => x.Location.X == MenOnBoard[i].Location.X);
+                    List<Intersection> matchY = MenOnBoard[i].AdjacentPoints.FindAll(x => x.Location.Y == MenOnBoard[i].Location.Y);
+                    var resultX = MenOnBoard.Intersect(matchX);
+                    var resultY = MenOnBoard.Intersect(matchY);
+
+                    if (resultX.ToList().Count == 2 || resultY.ToList().Count == 2) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public void Update(double elapsedTime) {
@@ -81,28 +106,26 @@ namespace Mill {
                 GL.End();
             }
             
-            if (state == Utils.PlayerState.MovingMen && ManToMove != null) {
+            if (state == Utils.PlayerState.MovingMen && SelectedMan != null) {
 
                 GL.LineWidth(5);
                 GL.Begin(PrimitiveType.Lines);
                 GL.Color3((Name == "Blue") ? Color.Blue : Color.Red);
-                for (int i = 0; i < ManToMove.AdjacentPoints.Count; i++) {
-                    if (!ManToMove.AdjacentPoints[i].Occupied) {
+                for (int i = 0; i < SelectedMan.AdjacentPoints.Count; i++) {
+                    if (!SelectedMan.AdjacentPoints[i].Occupied) {
                         GL.Vertex3(
-                            ManToMove.Location.X, 
-                            ManToMove.Location.Y, 
+                            SelectedMan.Location.X, 
+                            SelectedMan.Location.Y, 
                             0.2f);
                         GL.Vertex3(
-                            ManToMove.AdjacentPoints[i].Location.X,
-                            ManToMove.AdjacentPoints[i].Location.Y,
+                            SelectedMan.AdjacentPoints[i].Location.X,
+                            SelectedMan.AdjacentPoints[i].Location.Y,
                             0.2f);
                     }                    
                 }
                 GL.End();
             }
         }
-
-
 
         
     }

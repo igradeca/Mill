@@ -34,6 +34,7 @@ namespace Mill {
             PlacingMen,
             MovingMen,
             Fly,
+            RemoveOpponentsMan,
             GameOver
         }
 
@@ -44,14 +45,12 @@ namespace Mill {
 
             for (int i = 0; i < points.Count; i++) {
 
-                //points[i].Occupied = false;
                 var candidateDistance = points[i].IntersectsRay(rayCoordinates, MainCamera.Position);
                 //Console.WriteLine("circle " + i.ToString() + " : " + candidateDistance.ToString());
 
                 if (candidateDistance == null) {
                     continue;
                 }
-
                 if (bestDistance == null) {
                     bestDistance = candidateDistance;
                     bestCandidateIndex = i;

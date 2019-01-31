@@ -47,15 +47,6 @@ namespace Mill.GameStates {
                 _system.ChangeState("game_over");
             }
 
-            //_gameTime -= elapsedTime;
-            /*
-            if (_gameTime <= 0) {                
-                OnGameStart();
-                _gameMaster.Winner = true;
-                _system.ChangeState("game_over");
-            }
-            */
-
             _gameManager.Update(elapsedTime);
         }
 

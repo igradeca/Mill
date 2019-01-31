@@ -62,17 +62,16 @@ namespace Mill.Gameobjects {
             if (_input.Mouse.LeftPressed) {
                 Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
                 //Console.WriteLine(rayCoordinates.X + " " + rayCoordinates.Y + " " + rayCoordinates.Z);
-                if (PointSelected() && Utils.HasRayHitGameObject(rayCoordinates, _board.SelectedPoint)) {
+                if (PointSelected() && Utils.HasRayHitGameObject(rayCoordinates, _board.HoveringPoint)) {
                     MakeMove();
                 }
 
             } else if (_input.Mouse.RightPressed) {
-                _playerAtTurn.ManToMove = null;
+                _playerAtTurn.SelectedMan = null;
 
             } else {
                 Vector3 rayCoordinates = DrawUtils.instance.CameraToWorldPosition(_input.Mouse.Position.X, _input.Mouse.Position.Y);
-                Utils.FindClosestIntersectionHitByRay(rayCoordinates, _board.BoardPoints, ref _board.SelectedPoint);
-
+                Utils.FindClosestIntersectionHitByRay(rayCoordinates, _board.BoardPoints, ref _board.HoveringPoint);
             }
         }
 
@@ -92,7 +91,7 @@ namespace Mill.Gameobjects {
 
         private bool PointSelected() {
 
-            if (_board.SelectedPoint != null) {
+            if (_board.HoveringPoint != null) {
                 return true;
             } else {
                 return false;
@@ -111,17 +110,28 @@ namespace Mill.Gameobjects {
                 case Utils.PlayerState.Fly:
                     FlyMan();
                     break;
+                case Utils.PlayerState.RemoveOpponentsMan:
+                    RemoveOpponentsMan();
+                    break;
                 case Utils.PlayerState.GameOver:
+                    Console.WriteLine("It is game over.");
                     break;
             }
         }
         public void PlaceNewMan() {
 
-            if (_board.SelectedPoint.Occupied == false) {
+            if (_board.HoveringPoint.Occupied == false) {
                 Console.WriteLine(_playerAtTurn.Name + " is placing man...");
-                _board.SelectedPoint.Occupied = true;
-                _playerAtTurn.PlaceManAt(_board.SelectedPoint);
-                EndTurn();
+                _board.HoveringPoint.Occupied = true;
+                _playerAtTurn.PlaceManAt(_board.HoveringPoint);
+
+                if (_playerAtTurn.HasThreeMenLined()) {
+                    Console.WriteLine("Three Men Lined! BINGO!");
+                    _board.HoveringPoint = null;
+                    _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
+                } else {
+                    EndTurn();
+                }
             } else {
                 Console.WriteLine("This point is occupied! You cannot place your man here!");
             }
@@ -129,11 +139,18 @@ namespace Mill.Gameobjects {
 
         public void MoveMan() {
 
-            if (_board.SelectedPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.SelectedPoint.Location)) {
-                _playerAtTurn.ManToMove = _board.SelectedPoint;
-            } else if (_playerAtTurn.ManToMove != null && !_board.SelectedPoint.Occupied && ArePointsAdjacent(_playerAtTurn.ManToMove, _board.SelectedPoint)) {              
-                _playerAtTurn.MoveManAt(_board.SelectedPoint);                
-                EndTurn();
+            if (_board.HoveringPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.HoveringPoint.Location)) {
+                _playerAtTurn.SelectedMan = _board.HoveringPoint;
+            } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied && ArePointsAdjacent(_playerAtTurn.SelectedMan, _board.HoveringPoint)) {              
+                _playerAtTurn.MoveManAt(_board.HoveringPoint);
+
+                if (_playerAtTurn.HasThreeMenLined()) {
+                    Console.WriteLine("Three Men Lined! BINGO!");
+                    _board.HoveringPoint = null;
+                    _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
+                } else {
+                    EndTurn();
+                }
             }
         }
 
@@ -148,16 +165,35 @@ namespace Mill.Gameobjects {
 
         public void FlyMan() {
 
-            if (_board.SelectedPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.SelectedPoint.Location)) {
-                _playerAtTurn.ManToMove = _board.SelectedPoint;
-            } else if (_playerAtTurn.ManToMove != null && !_board.SelectedPoint.Occupied) {
-                _playerAtTurn.MoveManAt(_board.SelectedPoint);
+            if (_board.HoveringPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.HoveringPoint.Location)) {
+                _playerAtTurn.SelectedMan = _board.HoveringPoint;
+            } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied) {
+                _playerAtTurn.MoveManAt(_board.HoveringPoint);
+
+                if (_playerAtTurn.HasThreeMenLined()) {
+                    Console.WriteLine("Three Men Lined! BINGO!");
+                    _board.HoveringPoint = null;
+                    _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
+                } else {
+                    EndTurn();
+                }
+            }
+        }
+
+        public void RemoveOpponentsMan() {
+
+            Player opponent = (_playerAtTurn == _bluePlayer) ? _redPlayer : _bluePlayer;
+            Console.WriteLine("Opponent is " + opponent.Name + " player");
+            if (_board.HoveringPoint.Occupied && opponent.MenOnBoard.Exists(x => x == _board.HoveringPoint)) {
+                opponent.RemoveMan(_board.HoveringPoint);
+                Console.WriteLine("One man down.");
                 EndTurn();
             }
         }
 
         public void EndTurn() {
-            _board.SelectedPoint = null;
+
+            _board.HoveringPoint = null;
             _nextTurnTime = 1f;
         }
 
@@ -176,7 +212,7 @@ namespace Mill.Gameobjects {
             _playerAtTurn.StartTurn();
             Console.WriteLine(_playerAtTurn.Name + "'s turn! " + _playerAtTurn.state.ToString() + " men: " + _playerAtTurn.MenOnBoard.Count.ToString());
 
-            _board.SelectedPoint = null;
+            _board.HoveringPoint = null;
             _nextTurnTime = null;
         }
         
