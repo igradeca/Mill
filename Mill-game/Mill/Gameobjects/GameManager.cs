@@ -57,8 +57,7 @@ namespace Mill.Gameobjects {
                     _animationTime = null;
                     AfterMoveIsMade();
 
-                } else {
-                    //currentAnim = Utils.Lerp(startAnim, endAnim, 1 - (float)(_animationPassedTime / _animationTime));
+                } else {                    
                     currentAnim = Vector3.Lerp(startAnim, endAnim, 1 - (float)(_animationPassedTime / _animationTime));
                 }
             }
@@ -153,10 +152,7 @@ namespace Mill.Gameobjects {
                 _playerAtTurn.SelectedMan = _board.HoveringPoint;
 
             } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied && ArePointsAdjacent(_playerAtTurn.SelectedMan, _board.HoveringPoint)) {
-                //_playerAtTurn.MoveManAt(_board.HoveringPoint);
-                // Animation
                 Move();
-                //AfterMoveIsMade();
             }
         }
 
@@ -175,10 +171,7 @@ namespace Mill.Gameobjects {
                 _playerAtTurn.SelectedMan = _board.HoveringPoint;
 
             } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied) {
-                //_playerAtTurn.MoveManAt(_board.HoveringPoint);
-                // Animation()
                 Move();
-                //AfterMoveIsMade();
             }
         }
 

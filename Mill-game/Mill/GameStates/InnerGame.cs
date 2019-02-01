@@ -15,20 +15,11 @@ namespace Mill.GameStates {
 
         private StateSystem _system;
         private Input _input;
-        /*
-        private double _animationLenght;
-        private double _animationTime;
-        */
+
         // Gameobjects
         private GameData _gameData;
         private GameManager _gameManager;
         private Board _board;
-
-        /*
-        private Vector3 _pointLocation;
-        Vector3 start;
-        Vector3 end;
-        */
 
         public InnerGame(StateSystem system, Input input, GameData gameData) {
 
@@ -41,30 +32,11 @@ namespace Mill.GameStates {
 
         public void OnGameStart() {
 
-            //_gameTime = 5f; // current game time
-            //_gameData.Winner = null;
-
-            //_gameMaster = new GameManager(Utils.GameType.NineMorris);
             _board = new Board(_gameData.GameType);
-
             _gameManager = new GameManager(_gameData, _input, _board);
-
-            /*
-            // test
-            start = new Vector3(-1f, 0f, 1f);
-            end = new Vector3(1f, 0f, 1f);
-            _animationTime = 5;
-            _animationLenght = 5;
-            */
         }
 
         public void Update(double elapsedTime) {
-            /*
-            _animationTime -= elapsedTime;
-            if (_animationTime > 0) {
-                _pointLocation = Utils.Lerp(start, end, (float)(_animationTime / _animationLenght));
-            }
-            */
 
             KeyboardInput();
 
@@ -74,8 +46,6 @@ namespace Mill.GameStates {
             }
 
             _gameManager.Update(elapsedTime);
-
-            
         }
 
         private void KeyboardInput() {
@@ -88,19 +58,10 @@ namespace Mill.GameStates {
         }
 
         public void Render() {
-            /*
-            GL.PointSize(20);
-            GL.Begin(PrimitiveType.Points);
-            GL.Color3(Color.RoyalBlue);
-            GL.Vertex3(
-                _pointLocation);
-            GL.End();
-            */
 
             _board.Render();
             _gameManager.Render();
         }
-
 
 
     }

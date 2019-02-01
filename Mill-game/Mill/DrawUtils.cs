@@ -14,8 +14,6 @@ namespace Mill {
 
         public static DrawUtils instance;
 
-        //public Camera MainCamera;
-
         private Size _panelSize;
         private Matrix4 _projectionMatrix;
         private float _fov = 45f;
@@ -47,8 +45,8 @@ namespace Mill {
             _projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(
                 _fov * ((float)Math.PI / 180f),         // Field of view angle, in radians  // (float)Math.PI / 4    _fov * ((float)Math.PI / 180f)
                 aspectRatio,                            // Current window aspect ratio
-                0.1f,                                 // Near plane
-                1000f);                                  // Far plane
+                0.1f,                                   // Near plane
+                1000f);                                 // Far plane
         }
 
         public void InitGL() {
@@ -139,26 +137,6 @@ namespace Mill {
             }
 
             GL.End();
-        }
-
-        public void RenderTestCircles(List<Intersection> testList) {
-
-            float DEG2RAD = 3.14159f / 180f;
-
-            for (int i = 0; i < testList.Count; i++) {
-                if (testList[i].Occupied) {
-                    GL.Color3(Color.Black);
-                } else {
-                    GL.Color3(Color.Red);
-                }
-
-                GL.Begin(PrimitiveType.LineLoop);
-                for (int j = 0; j < 360; j++) {
-                    float degInRad = j * DEG2RAD;
-                    GL.Vertex3(Math.Cos(degInRad) * 1f + testList[i].Location.X, Math.Sin(degInRad) * 1f + testList[i].Location.Y, testList[i].Location.Z);
-                }
-                GL.End();
-            }
         }
 
 

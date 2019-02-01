@@ -22,8 +22,6 @@ namespace Mill {
         private Input _input;
         private GameData _gameData;
 
-        private List<Intersection> testList;
-
         public Form1() {
 
             InitializeComponent();
@@ -41,8 +39,6 @@ namespace Mill {
             InitializeInputs();
             InitializeGameStates();
             InitializeDisplay();
-
-            //TestPoints();
         }
 
         private void InitializeGameStates() {
@@ -68,25 +64,6 @@ namespace Mill {
 
             new DrawUtils(mainPanel.ClientRectangle.Size);
             DrawUtils.instance.InitGL();
-        }
-
-        private void TestPoints() {
-
-            testList = new List<Intersection>();
-
-            testList.Add(new Intersection(
-                0, 
-                new Vector3(0f, 0f, 0f)));
-            testList.Add(new Intersection(
-                0,
-                new Vector3(1f, 1f, 0f)));
-            testList.Add(new Intersection(
-                0,
-                new Vector3(0f, 1f, 0f)));
-            testList.Add(new Intersection(
-                0,
-                new Vector3(-1f, -1f, 0f)));
-
         }
 
         void GameLoop(double elapsedTime) {

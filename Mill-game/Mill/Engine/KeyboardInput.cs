@@ -13,7 +13,7 @@ namespace Mill.Engine {
         public static extern short GetAsyncKeyState(int vKey);
 
         private Control _openTKControl;
-        public KeyPressEventHandler KeyPressEvent; // KeyEventArgs
+        public KeyPressEventHandler KeyPressEvent;
 
         class KeyState {
 
