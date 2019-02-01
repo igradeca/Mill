@@ -32,6 +32,7 @@ namespace Mill.GameStates {
 
             if (_textToDisplay == "") {
                 _textToDisplay = "Game Over!\\n" + ((_gameData.Winner == true) ? "Blue" : "Red") + " player won!";
+                _textToDisplay += "\\n\\nPress Enter to start new game...";
             }
 
             if (_input.Keyboard.IsKeyPressed(Keys.Enter)) {
@@ -47,7 +48,7 @@ namespace Mill.GameStates {
             GL.Enable(EnableCap.Texture2D);
             GL.Color3(Color.White);
 
-            DrawUtils.instance.RenderText(new Vector3(-1f, 0f, -4.9f), _textToDisplay, 50, 0.04f);
+            DrawUtils.instance.RenderText(new Vector3(-5f, 1f, -4.9f), _textToDisplay, 50, 0.04f);
         }
 
 

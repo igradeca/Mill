@@ -10,7 +10,7 @@ using System.Drawing.Imaging;
 namespace Mill.Engine {
     public static class Text {
 
-        public static string FontBitmapFilename = "test.png";
+        public static string FontBitmapFilename = "font.png";
         public static int GlyphsPerLine = 16;
         public static int GlyphLineCount = 16;
         public static int GlyphWidth = 11;

@@ -54,9 +54,7 @@ namespace Mill {
             float? bestDistance = null;
 
             for (int i = 0; i < points.Count; i++) {
-
                 var candidateDistance = points[i].IntersectsRay(rayCoordinates, MainCamera.Position);
-                //Console.WriteLine("circle " + i.ToString() + " : " + candidateDistance.ToString());
 
                 if (candidateDistance == null) {
                     continue;
@@ -88,6 +86,11 @@ namespace Mill {
             } else {
                 return false;
             }
+        }
+
+        public static Vector3 Lerp(Vector3 v0, Vector3 v1, float t) {
+
+            return (1 - t) * v0 + t * v1;
         }
 
 

@@ -25,6 +25,12 @@ namespace Mill.Gameobjects {
         private string _playerInfoText;
         private string _statusText;
 
+        // Animation things
+        private double? _animationTime;
+        private double? _animationPassedTime;
+        private Vector3 startAnim, endAnim, currentAnim;
+        private Intersection destination;
+
         public GameManager(GameData gameData, Input input, Board board) {
 
             _gameData = gameData;
@@ -42,6 +48,20 @@ namespace Mill.Gameobjects {
         }
 
         public void Update(double elapsedTime) {
+
+            if (_animationTime.HasValue) {
+                _animationPassedTime -= elapsedTime;
+
+                if (_animationPassedTime <= 0) {
+                    _playerAtTurn.MoveManAt(destination);
+                    _animationTime = null;
+                    AfterMoveIsMade();
+
+                } else {
+                    //currentAnim = Utils.Lerp(startAnim, endAnim, 1 - (float)(_animationPassedTime / _animationTime));
+                    currentAnim = Vector3.Lerp(startAnim, endAnim, 1 - (float)(_animationPassedTime / _animationTime));
+                }
+            }
 
             if (_nextTurnTime.HasValue) {
                 _nextTurnTime -= elapsedTime;
@@ -118,17 +138,8 @@ namespace Mill.Gameobjects {
                 Console.WriteLine(_playerAtTurn.Name + " is placing man...");
                 _board.HoveringPoint.Occupied = true;
                 _playerAtTurn.PlaceManAt(_board.HoveringPoint);
-
-                if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
-                    StatusToRender(Utils.GameInfo.ThreeMenLined);
-                    Console.WriteLine("Three Men Lined! BINGO!");
-                    _board.HoveringPoint = null;
-                    _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
-
-                } else {
-                    EndTurn();
-
-                }
+                destination = _board.HoveringPoint;
+                AfterMoveIsMade();
             } else {
                 StatusToRender(Utils.GameInfo.CannotPlace);
                 Console.WriteLine("This point is occupied! You cannot place your man here!");
@@ -141,17 +152,11 @@ namespace Mill.Gameobjects {
             if (_board.HoveringPoint.Occupied && _playerAtTurn.MenOnBoard.Exists(x => x.Location == _board.HoveringPoint.Location)) {
                 _playerAtTurn.SelectedMan = _board.HoveringPoint;
 
-            } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied && ArePointsAdjacent(_playerAtTurn.SelectedMan, _board.HoveringPoint)) {              
-                _playerAtTurn.MoveManAt(_board.HoveringPoint);
-
-                if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
-                    StatusToRender(Utils.GameInfo.ThreeMenLined);
-                    Console.WriteLine("Three Men Lined! BINGO!");
-                    _board.HoveringPoint = null;
-                    _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
-                } else {
-                    EndTurn();
-                }
+            } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied && ArePointsAdjacent(_playerAtTurn.SelectedMan, _board.HoveringPoint)) {
+                //_playerAtTurn.MoveManAt(_board.HoveringPoint);
+                // Animation
+                Move();
+                //AfterMoveIsMade();
             }
         }
 
@@ -170,16 +175,10 @@ namespace Mill.Gameobjects {
                 _playerAtTurn.SelectedMan = _board.HoveringPoint;
 
             } else if (_playerAtTurn.SelectedMan != null && !_board.HoveringPoint.Occupied) {
-                _playerAtTurn.MoveManAt(_board.HoveringPoint);
-
-                if (_playerAtTurn.ThreeManLined(_board.HoveringPoint)) {
-                    StatusToRender(Utils.GameInfo.ThreeMenLined);
-                    Console.WriteLine("Three Men Lined! BINGO!");
-                    _board.HoveringPoint = null;
-                    _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
-                } else {
-                    EndTurn();
-                }
+                //_playerAtTurn.MoveManAt(_board.HoveringPoint);
+                // Animation()
+                Move();
+                //AfterMoveIsMade();
             }
         }
 
@@ -197,8 +196,30 @@ namespace Mill.Gameobjects {
             }
         }
 
-        public void EndTurn() {
+        private void Move() {
 
+            if (_playerAtTurn.state == Utils.PlayerState.MovingMen || _playerAtTurn.state == Utils.PlayerState.Fly) {
+                Console.WriteLine("Animating...");
+                destination = _board.HoveringPoint;
+                Animate();
+                _playerAtTurn.RemoveSelectedMan();
+            }
+        }
+
+        private void AfterMoveIsMade() {
+
+            if (_playerAtTurn.ThreeManLined(destination)) {
+                StatusToRender(Utils.GameInfo.ThreeMenLined);
+                Console.WriteLine("Three Men Lined! BINGO!");
+                destination = null;
+                _playerAtTurn.state = Utils.PlayerState.RemoveOpponentsMan;
+            } else {
+                EndTurn();
+            }            
+        }
+
+        public void EndTurn() {
+            
             _board.HoveringPoint = null;
             _nextTurnTime = 1f;
         }
@@ -233,11 +254,26 @@ namespace Mill.Gameobjects {
             }
         }
 
+        public void Render() {
+
+            _bluePlayer.Render();
+            _redPlayer.Render();
+
+            RenderMovement();
+
+            GL.Enable(EnableCap.Texture2D);
+            GL.Color3((_playerAtTurn.Name == "Blue") ? Color.RoyalBlue : Color.Red);
+            DrawUtils.instance.RenderText(new Vector3(-6f, 4f, 4f), _playerInfoText, 40, 0.02f);
+            GL.Color3(Color.White);
+            DrawUtils.instance.RenderText(new Vector3(-6f, -4.5f, 4f), _statusText, 40, 0.02f);
+            GL.Disable(EnableCap.Texture2D);            
+        }
+        
         public void StatusToRender(Utils.GameInfo status) {
 
             switch (status) {
                 case Utils.GameInfo.TurnBegin:
-                    _playerInfoText = _playerAtTurn.Name + " player\\n" 
+                    _playerInfoText = _playerAtTurn.Name + " player\\n"
                         + "Men on board: " + _playerAtTurn.MenOnBoard.Count;
 
                     _statusText = _playerAtTurn.Name + "'s turn!";
@@ -250,10 +286,10 @@ namespace Mill.Gameobjects {
                     }
                     break;
                 case Utils.GameInfo.MenPlaced:
-                    _statusText = "Men is placed.";
+                    _statusText = "Man is placed.";
                     break;
                 case Utils.GameInfo.ThreeMenLined:
-                    _statusText = "Three men lined! Remove one.";
+                    _statusText = "Three men lined! Remove one opponents.";
                     break;
                 case Utils.GameInfo.CannotPlace:
                     _statusText = "Can't place here.";
@@ -267,17 +303,32 @@ namespace Mill.Gameobjects {
             }
         }
 
-        public void Render() {
+        private void Animate() {          
+            // from _playerAtTurn.SelectedMan
+            // to _board.HoveringPoint
+            startAnim = _playerAtTurn.SelectedMan.Location;
+            endAnim = destination.Location;
 
-            _bluePlayer.Render();
-            _redPlayer.Render();
+            double time = Vector3.Distance(startAnim, endAnim) * 0.2d;
 
-            GL.Enable(EnableCap.Texture2D);
+            _animationPassedTime = time;
+            _animationTime = time;
+        }
+
+        private void RenderMovement() {
+
+            if (_animationTime == null) {
+                return;
+            }
+
+            GL.PointSize(20);
+            GL.Begin(PrimitiveType.Points);
             GL.Color3((_playerAtTurn.Name == "Blue") ? Color.RoyalBlue : Color.Red);
-            DrawUtils.instance.RenderText(new Vector3(-6f, 4f, 4f), _playerInfoText, 40, 0.02f);
-            GL.Color3(Color.White);
-            DrawUtils.instance.RenderText(new Vector3(-6f, -4.5f, 4f), _statusText, 40, 0.02f);
-            GL.Disable(EnableCap.Texture2D);            
+            GL.Vertex3(
+                currentAnim.X,
+                currentAnim.Y,
+                currentAnim.Z + 0.2f);
+            GL.End();
         }
 
 

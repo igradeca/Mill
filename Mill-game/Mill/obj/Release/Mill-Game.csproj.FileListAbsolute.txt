@@ -1,0 +1,3 @@
+E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\bin\Release\Mill.exe.config
+E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\obj\Release\Mill.exe
+E:\Workspaces\Nanobit testni zadatak\Mill repository\Mill\Mill-game\Mill\obj\Release\Mill.pdb

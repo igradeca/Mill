@@ -55,12 +55,15 @@ namespace Mill {
 
         public void MoveManAt(Intersection movingPoint) {
 
+            MenOnBoard.Add(movingPoint);
+            movingPoint.Occupied = true;
+        }
+
+        public void RemoveSelectedMan() {
+
             SelectedMan.Occupied = false;
             MenOnBoard.Remove(SelectedMan);
             SelectedMan = null;
-
-            MenOnBoard.Add(movingPoint);
-            movingPoint.Occupied = true;
         }
 
         public void RemoveMan(Intersection point) {
@@ -105,6 +108,7 @@ namespace Mill {
                 GL.End();
             }
             
+            // Draw lines if player wants to move
             if (state == Utils.PlayerState.MovingMen && SelectedMan != null) {
 
                 GL.LineWidth(5);
